@@ -1,17 +1,12 @@
-import * as React from 'react';
 import * as classNames from 'classnames';
 import Button from './Button';
 import { IDialogboxProps } from './Dialogbox.d';
 import './dialogbox.less';
-import { useEffect, useMemo, useRef, useReducer, useState } from 'react';
+import * as React from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import store from './store/DialogboxStore';
 
-const validFunction = (callback, event?) => {
-    if (!callback || typeof callback !== 'function') {
-        return false
-    }
-    return callback(event)
-}
+const { validFunction } = store
 
 const Dialogbox = (props: IDialogboxProps) => {
     const dialogboxId = useRef(null);
@@ -78,7 +73,6 @@ const Dialogbox = (props: IDialogboxProps) => {
     const { width, height, marginTop, marginLeft } = computerLayout;
 
     const { 
-        mask = true,
         visible,
         draggable = true,
         title, isModal,
@@ -129,7 +123,7 @@ const Dialogbox = (props: IDialogboxProps) => {
 
     /* 全屏/还原 */
     const handleExtend = (direction?, value?) => {
-        if (controllable()) return
+        if (!controllable()) return;
         let { clientWidth, clientHeight } = document.body;
         let marginTop, marginLeft, toRight, toBottom;
         let { draggable, isExtend, historyToBottom, historyToRight, height, width, historyWidth, historyHeight } = state;
@@ -149,7 +143,7 @@ const Dialogbox = (props: IDialogboxProps) => {
             else if (direction === 'right') {
                 width *= 0.5;
                 toRight = width;
-            } 67
+            }
         } else {
             //从全屏状态恢复为原来的状态
             draggable = props.draggable === false ? false : true;
@@ -160,29 +154,40 @@ const Dialogbox = (props: IDialogboxProps) => {
             marginTop = 0 - 0.5 * height;
             marginLeft = 0 - 0.5 * width;
         }
-        setState({
-            ...state,
-            ...{
-                historyWidth: state.width,
-                historyHeight: state.height,
-                marginTop,
-                marginLeft,
-                toRight,
-                toBottom: 0,
-                draggable,
-                historyToBottom: state.toBottom,
-                historyToRight: state.toRight,
-                isExtend: !isExtend,
-                width,
-                height,
-                transition: '0.4s'
-            }
-        })
-        setTimeout(() => setState({
-            ...state, ...{
-                transition: 'none'
-            }
-        }), 400)
+        const callback = () => {
+            setState({
+                ...state,
+                ...{
+                    historyWidth: state.width,
+                    historyHeight: state.height,
+                    marginTop,
+                    marginLeft,
+                    toRight,
+                    toBottom,
+                    draggable,
+                    historyToBottom: state.toBottom,
+                    historyToRight: state.toRight,
+                    isExtend: !isExtend,
+                    width,
+                    height,
+                    transition: '0.4s'
+                }
+            })
+
+            setTimeout(() => setState({
+                ...state, ...{
+                    transition: 'none'
+                }
+            }), 400)
+        }
+
+        if(value === true) {
+            setTimeout(()=>{
+                callback()
+            },500)
+        } else {
+            callback()
+        }      
     }
 
     const afterClose = () => {
