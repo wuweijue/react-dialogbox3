@@ -59,7 +59,7 @@ const Options = (props) => {
                         children
                     })
                 }}
-            >点击出现对话框</Button>
+            >弹出对话框</Button>
         </div>
 
         <div className="bottom">

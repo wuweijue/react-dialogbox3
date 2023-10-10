@@ -3,9 +3,6 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 import './public-path';
 
-// const root = createRoot(document.querySelector('#root'))
-// root.render(<div />);
-
 let root;
 
 function render(props) {
@@ -27,6 +24,5 @@ export async function mount(props) {
 }
 
 export async function unmount(props) {
-    const { container } = props;
     root.unmount()
 }
