@@ -2,6 +2,8 @@ import * as React from 'react';
 
 export type IDialogboxProps = {
 
+    theme?: 'light' | 'dark'
+
     byOpen?: boolean
 
     isModal?: boolean

@@ -1,6 +1,8 @@
 import { Button, Form, Input, InputNumber, Radio, Switch } from 'antd';
 import React, { useState } from 'react';
 import MonacoEditor from 'react-monaco-editor';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import * as codeStyle from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import './options.less';
 import { open, hideDialogbox } from '../../lib/src';
 
@@ -10,6 +12,7 @@ type OptionsType = {
 }
 
 const Options = (props) => {
+    const style = props.theme === 'dark' ? codeStyle.vs2015 : codeStyle.xcode
     const [state, setState] = useState<OptionsType>({
         title: 'react-dialogbox',
         mask: true,
@@ -21,21 +24,42 @@ const Options = (props) => {
         footerNum: 1,
         footerContent: '',
         draggable: true,
-        okText: '',
-        cancelText: '',
-        footer: null,
+        theme: props.theme || 'light',
+        okText: '确认',
+        cancelText: '取消',
+        footer: true,
         children: '对话框内容',
     })
 
-    const { title, footerNum, footerContent, mask, maskClosable, width, height, header, draggable, okText, cancelText, children, fullScreen } = state;
+    const { theme, title, footerNum, footerContent, mask, maskClosable, width, height, header, draggable, okText, cancelText, children, fullScreen } = state;
 
-    const handleEditorChange = (newValue, e) => {
-        try {
-            let code = JSON.parse(newValue);
-            setState({ ...state, ...code })
-        } catch (error) {
+    const formatCode = (state) => {
+        return (
+`
+import { Dialogbox } from 'react-dialogbox';
 
-        }
+const App = () => {
+    return <Dialogbox
+        visible={true}
+        title={'${state.title}'}
+        mask={${state.mask}}
+        maskClosable={${state.maskClosable}}
+        width={${state.width}}
+        height={${state.height}}
+        fullScreen={${state.fullScreen}}
+        header={${state.header}}
+        footer={${state.footer}}
+        draggable={${state.draggable}}
+        okText={'${state.okText}'}
+        cancelText={'${state.cancelText}'}
+    >
+        ${state.children}
+    <Dialogbox>
+}
+                
+export default App
+`
+        )
     }
 
     return <div className="options">
@@ -54,6 +78,7 @@ const Options = (props) => {
                         height,
                         fullScreen,
                         header,
+                        theme,
                         footer: footerNum === 2 ? false : (footerNum === 1 ? true : footerContent),
                         draggable,
                         children
@@ -64,7 +89,7 @@ const Options = (props) => {
 
         <div className="bottom">
             <div className='form-wrapper'>
-                <h3 className='form-title'>属性面板</h3>
+                <h3 className='form-title'>调试面板</h3>
                 <Form labelAlign='left'>
                     <Form.Item label="对话框标题 (title)">
                         <Input value={title} onChange={(e) => { setState({ ...state, ...{ title: e.target.value } }) }} />
@@ -141,6 +166,15 @@ const Options = (props) => {
                         }} />
                     </Form.Item>
 
+                    {/* <Form.Item label="主题 (theme)">
+                        <Radio.Group value={theme} onChange={(e => {
+                            setState({ ...state, ...{ theme: e.target.value } })
+                        })}>
+                            <Radio value={'light'} > light </Radio>
+                            <Radio value={'dark'} > dark </Radio>
+                        </Radio.Group>
+                    </Form.Item> */}
+
                     <Form.Item label="自定义确认按钮内容 (okText)">
                         <Input placeholder={'确认'} value={okText} onChange={(e) => {
                             setState({ ...state, ...{ okText: e.target.value } })
@@ -156,11 +190,14 @@ const Options = (props) => {
                 </Form>
             </div >
             <div className='code-wrapper'>
-                <h3>源码编辑</h3>
+                <h3>代码示例</h3>
+                <SyntaxHighlighter language="javascript" style={style}>
+                    {formatCode(state)}
+                </SyntaxHighlighter>
                 <MonacoEditor
                     width="600"
                     height='512'
-                    language="json"
+                    language="javascript"
                     theme={props.theme === 'dark' ? "vs-dark" : 'vs'}
                     options={{
                         autoIndent: 'brackets',//自动布局
@@ -169,10 +206,10 @@ const Options = (props) => {
                         minimap: {
                             enabled: false // 不要小地图
                         },
+                        readOnly: true,
                     }}
-                    onChange={handleEditorChange}
-                    value={formatJson(JSON.stringify(state))}
-                // editorDidMount={editorDidMountHandle}
+                    // onChange={handleEditorChange}
+                    value={formatCode(state)}
                 />
             </div>
         </div >
@@ -180,65 +217,3 @@ const Options = (props) => {
 }
 
 export default Options
-
-function formatJson(json, options?) {
-    let reg,
-        formatted = '',
-        pad = 0,
-        PADDING = '    ';
-    options = options || {};
-    options.newlineAfterColonIfBeforeBraceOrBracket = (options.newlineAfterColonIfBeforeBraceOrBracket === true) ? true : false;
-    options.spaceAfterColon = (options.spaceAfterColon === false) ? false : true;
-    if (typeof json !== 'string') {
-        json = JSON.stringify(json);
-    } else {
-        json = JSON.parse(json);
-        delete json.footerNum;
-        delete json.footerContent;
-        json = JSON.stringify(json);
-    }
-    reg = /([\{\}])/g;
-    json = json.replace(reg, '\r\n$1\r\n');
-    reg = /([\[\]])/g;
-    json = json.replace(reg, '\r\n$1\r\n');
-    reg = /(\,)/g;
-    json = json.replace(reg, '$1\r\n');
-    reg = /(\r\n\r\n)/g;
-    json = json.replace(reg, '\r\n');
-    reg = /\r\n\,/g;
-    json = json.replace(reg, ',');
-    if (!options.newlineAfterColonIfBeforeBraceOrBracket) {
-        reg = /\:\r\n\{/g;
-        json = json.replace(reg, ':{');
-        reg = /\:\r\n\[/g;
-        json = json.replace(reg, ':[');
-    }
-    if (options.spaceAfterColon) {
-        reg = /\:/g;
-        json = json.replace(reg, ':');
-    }
-    (json.split('\r\n')).forEach(function (node, index) {
-        var i = 0,
-            indent = 0,
-            padding = '';
-
-        if (node.match(/\{$/) || node.match(/\[$/)) {
-            indent = 1;
-        } else if (node.match(/\}/) || node.match(/\]/)) {
-            if (pad !== 0) {
-                pad -= 1;
-            }
-        } else {
-            indent = 0;
-        }
-
-        for (i = 0; i < pad; i++) {
-            padding += PADDING;
-        }
-
-        formatted += padding + node + '\r\n';
-        pad += indent;
-    }
-    );
-    return formatted;
-};

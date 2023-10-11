@@ -65,6 +65,8 @@ class Tab extends React.Component<ITabViewProps, any> {
         return <div ref={(ref) => this.tabRef = ref} className={classNames('tab ', className)}>
             <div className='tab-bar-wrapper'>
                 <div className='tab-bar-list'>
+                    <div className="logo">React-dialogbox</div>
+                    <div className="before tab-bar-item"></div>
                     {
                         tabList.map((item, idx) => {
                             return <div onClick={() => {
@@ -83,6 +85,7 @@ class Tab extends React.Component<ITabViewProps, any> {
                             </div>
                         })
                     }
+                    <div className="after tab-bar-item"></div>
                 </div>
             </div>
             <div className='tab-component-wrapper'>

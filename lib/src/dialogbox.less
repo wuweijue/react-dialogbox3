@@ -138,12 +138,13 @@ body {
         }
     }
 
-    &.windows .dialogbox-header {
+    .dialogbox-header {
         background-color: white;
         border-bottom: 1px solid #e8e8e8;
 
         .dialogbox-title {
             color: #01000C;
+
         }
 
     }
@@ -155,7 +156,7 @@ body {
         line-height: 40px;
         padding: 0 8px 0 16px;
         background-color: white;
-        border-radius: 8px 8px 0 0;
+        border-radius: 10px 10px 0 0;
 
         .@{prefix}-title {
             cursor: move;
@@ -254,6 +255,7 @@ body {
         display: flex;
         justify-content: flex-end;
         align-items: center;
+        border-radius: 0 0 8px 8px;
 
         &-btnList {
             height: 100%;
@@ -361,6 +363,7 @@ body {
     width: 0%;
     transition: 0.4s;
     top: 50%;
+    z-index: 996;
 
     &.mask-in-left {
         background-color: rgba(255, 255, 255, 0.3);
@@ -414,6 +417,7 @@ body {
     width: 0%;
     transition: 0.4s;
     left: 50%;
+    z-index: 996;
 
     &.mask-in-top {
         top: 0;
@@ -461,5 +465,27 @@ body {
             bottom: 0;
             backdrop-filter: blur(6px);
         }
+    }
+}
+
+.dark.dialogbox {
+    border: 1px solid #555;
+    border-radius: 10px;
+    box-shadow: none;
+    .dialogbox-header{
+        background-color: #2E2E2E;
+        border-radius: 10px ;
+        .dialogbox-title-content {
+            color: rgba(255, 255, 255, 0.65);
+        }
+        border-bottom: 1px solid #2E2E2E;
+    }
+    .dialogbox-body {
+        // background-color: rgba();
+        background-color: #0C0C0C;
+    }
+    .dialogbox-footer {
+        border-top: none;
+        background-color: #666;
     }
 }

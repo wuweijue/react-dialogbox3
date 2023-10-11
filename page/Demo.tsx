@@ -27,6 +27,7 @@ class DialogDemo extends React.Component {
             // 根据新的全局状态更新本地状态  
             this.setState({
                 theme: newState.theme || 'dark'
+                // theme: 'light'
             })
         });
     }
@@ -65,6 +66,9 @@ class DialogDemo extends React.Component {
         return <div className={`dialogDemo ${this.state.theme}`} >
             <ConfigProvider
                 theme={{
+                    token: {
+                        colorPrimary: '#9E339F'
+                    },
                     algorithm: this.state.theme === 'dark' ? theme.darkAlgorithm : undefined
                 }}
             >

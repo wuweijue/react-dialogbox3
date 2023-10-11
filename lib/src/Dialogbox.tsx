@@ -4,6 +4,7 @@ import Button from './Button';
 import { IDialogboxProps } from './Dialogbox.d';
 import './dialogbox.less';
 import store from './store/DialogboxStore';
+import * as classnames from 'classnames';
 
 const { validFunction } = store
 
@@ -573,8 +574,8 @@ class Dialogbox extends React.Component<IDialogboxProps, any> {
     }
 
     render() {
-        const { className: propsClassName, visible } = this.props;
-        let { isExtend, draggable, toRight, toBottom, transition, width, height, zIndex, marginTop, marginLeft } = this.state;
+        const { className: propsClassName, visible, theme } = this.props;
+        let { isExtend, toRight, toBottom, transition, width, height, zIndex, marginTop, marginLeft } = this.state;
         const className = classNames('dialogbox', 'dialogbox-animation-in',
             { 'dialogbox-extendStatus': isExtend, [propsClassName]: propsClassName },
             { 'dialogbox-uncontrolable': !this.controllable() },
@@ -590,11 +591,16 @@ class Dialogbox extends React.Component<IDialogboxProps, any> {
             }
         }
 
+        const themeClass = theme === 'dark' ? 'dark' : 'light'
+
         return (
             <div
                 ref={(dialogbox) => this.dom = dialogbox}
                 id={'dialogbox-' + this.dialogboxId}
-                className={className}
+                className={classnames(
+                    className,
+                    themeClass
+                )}
                 onClick={() => { this.handleFocus() }}
                 onMouseDown={e => {
                     if (!this.controllable()) {
