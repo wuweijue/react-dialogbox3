@@ -6,10 +6,10 @@
 
             .logo {
                 color: #FF27BB;
-                background: linear-gradient(to right, #FF27BB, #892e8a);
+                // background: linear-gradient(to right, #FF27BB, #892e8a);
                 -webkit-background-clip: text;
                 font-weight: bold;
-                color: transparent;
+                // color: transparent;
             }
 
             background: #2d2d2d;
@@ -17,6 +17,7 @@
             .tab-bar-list {
                 .tab-bar-item {
                     background: #2d2d2d;
+                    color: rgba(255, 255, 255, 0.65);
 
                     &.active {
                         position: relative;
@@ -79,12 +80,6 @@
 .dialogDemo {
     flex: 1;
 
-    .logo {
-        padding-left: 20px;
-        font-size: 16px;
-        margin-top: 18px;
-    }
-
     .tab {
         height: 100%;
         display: flex;
@@ -94,7 +89,7 @@
 
         .tab-bar-wrapper {
             height: 48px;
-            font-size: 14px;
+            font-size: 15px;
             background: #F0f0f0;
 
             .tab-bar-list {
@@ -121,25 +116,39 @@
                     z-index: 1;
                     position: relative;
 
+                    &.tab-bar-logo {
+                        // margin-top: 4px;
+                        font-size: 16px;
+                        &::before {
+                            display: none;
+                        }
+
+                        border-top-left-radius: 0!important;
+
+                        .tab-bar-item-active-tip {
+                            display: none;
+                        }
+                    }
+
                     &.before {
                         width: 20px;
-                        border-radius: 0px 0px 10px 0px;
+                        border-radius: 0px 0px 12px 0px;
                     }
     
                     &.after {
                         width: 20px;
-                        border-radius: 0px 0px 0px 10px;
+                        border-radius: 0px 0px 0px 12px;
                     }
 
                     &.active {
                         z-index: 0;
-                        border-radius : 10px 10px 0 0;
+                        border-radius : 12px 12px 0 0;
                     }
 
-                    padding : 0 10px;
+                    padding : 0 16px;
                     align-items : center;
                     background-color: white;
-                    border-radius : 10px;
+                    border-radius : 12px;
                     height : 36px;
                     border : none;
                     display : inline-flex;
@@ -206,6 +215,7 @@
             background-color: white;
             overflow-y: auto;
             overflow-x: hidden;
+            
 
             .tab-component-list {
                 // transition: 0.5s;

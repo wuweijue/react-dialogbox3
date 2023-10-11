@@ -6,10 +6,11 @@ import Show from './components/Show';
 import Api from './components/Api';
 import { ConfigProvider, theme } from 'antd';
 import Explain from './components/Explain';
+import Home from './components/Home';
 class DialogDemo extends React.Component {
 
     state = {
-        activeKey: '0',
+        activeKey: '-1',
         theme: 'dark'
     }
 
@@ -36,6 +37,11 @@ class DialogDemo extends React.Component {
         const { activeKey } = this.state;
 
         const tabList = [
+            {
+                key: '-1',
+                title: <div className="logo">React-dialogbox</div>,
+                component: <Home theme={this.state.theme} />
+            },
             {
                 key: '0',
                 title: '配置示例',
@@ -67,7 +73,13 @@ class DialogDemo extends React.Component {
             <ConfigProvider
                 theme={{
                     token: {
-                        colorPrimary: '#9E339F'
+                        colorPrimary: '#9E339F',
+                        
+                    },
+                    components: {
+                        Button: {
+                            borderRadius: 8,
+                        }
                     },
                     algorithm: this.state.theme === 'dark' ? theme.darkAlgorithm : undefined
                 }}

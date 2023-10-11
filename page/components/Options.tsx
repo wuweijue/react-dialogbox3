@@ -191,9 +191,9 @@ export default App
             </div >
             <div className='code-wrapper'>
                 <h3>代码示例</h3>
-                <SyntaxHighlighter language="javascript" style={style}>
+                {/* <SyntaxHighlighter language="javascript" style={style}>
                     {formatCode(state)}
-                </SyntaxHighlighter>
+                </SyntaxHighlighter> */}
                 <MonacoEditor
                     width="600"
                     height='512'

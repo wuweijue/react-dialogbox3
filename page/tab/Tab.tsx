@@ -65,13 +65,13 @@ class Tab extends React.Component<ITabViewProps, any> {
         return <div ref={(ref) => this.tabRef = ref} className={classNames('tab ', className)}>
             <div className='tab-bar-wrapper'>
                 <div className='tab-bar-list'>
-                    <div className="logo">React-dialogbox</div>
-                    <div className="before tab-bar-item"></div>
+                   
+                    {/* <div className="before tab-bar-item"></div> */}
                     {
                         tabList.map((item, idx) => {
-                            return <div onClick={() => {
+                            return <button onClick={() => {
                                 onChange && onChange(item.key)
-                            }} className={classNames('tab-bar-item', { 'active': activeKey === item.key })} key={item.key || idx}>
+                            }} className={classNames('tab-bar-item', {'tab-bar-logo': item.key === '-1' }, { 'active': activeKey === item.key })} key={item.key || idx}>
                                 <div className={classNames('tab-bar-item-active-tip', { 'active': activeKey === item.key })}></div>
                                 <div className='tab-bar-item-title' >
                                     {item.title}
@@ -82,7 +82,7 @@ class Tab extends React.Component<ITabViewProps, any> {
                                     <div className="close-line"></div>
                                     <div className="close-line"></div>
                                 </div>
-                            </div>
+                            </button>
                         })
                     }
                     <div className="after tab-bar-item"></div>
