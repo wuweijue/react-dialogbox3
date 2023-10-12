@@ -1,17 +1,17 @@
 import * as classNames from 'classnames';
-import Button from './Button';
+import Button from '../../Button';
 import { IDialogboxProps } from './Dialogbox.d';
 import './dialogbox.less';
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import store from './store/DialogboxStore';
+import { inject, observer } from 'mobx-react';
 
-const { validFunction } = store
-
-const Dialogbox = (props: IDialogboxProps) => {
+const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
     const dialogboxId = useRef(null);
     const isEmbedded = useRef(false); // 是否是内嵌在组件中的
     const dom = useRef<HTMLDivElement | null>() // 对话框最外层元素 DOM
+    const store = props.store;
+    const { validFunction } = store;
 
     const computerLayout = useMemo(() => {
         let width = 400, height = 180;
@@ -72,7 +72,7 @@ const Dialogbox = (props: IDialogboxProps) => {
 
     const { width, height, marginTop, marginLeft } = computerLayout;
 
-    const { 
+    const {
         visible,
         draggable = true,
         title, isModal,
@@ -108,7 +108,7 @@ const Dialogbox = (props: IDialogboxProps) => {
     });
 
     const controllable = () => {
-        let focusItem = store.getFocusItem();
+        let focusItem = store.focusItem;
         if (!focusItem) {
             return true
         }
@@ -181,48 +181,19 @@ const Dialogbox = (props: IDialogboxProps) => {
             }), 400)
         }
 
-        if(value === true) {
-            setTimeout(()=>{
+        if (value === true) {
+            setTimeout(() => {
                 callback()
-            },500)
+            }, 500)
         } else {
             callback()
-        }      
+        }
     }
 
     const afterClose = () => {
         validFunction(props.afterClose);
         handleExtend(null, false);
         store.changeDialogboxVisible(dialogboxId.current, false);
-    }
-
-    // 当阴影点击时触发的事件
-    const handleMaskClick = (e) => {
-
-        // 此处接收一个钩子作为参数，若存在返回值且返回值为 true 则跳过后续操作
-        if (validFunction(beforeMaskClick, e)) {
-            return
-        }
-
-        const dialogboxList = store.dialogboxList;
-
-        if (!maskClosable) {
-            return
-        }
-
-        if (e.srcElement !== document.querySelector('#dialogbox-root') && e.srcElement !== document.querySelector('.dialogbox-mask')) {
-            return
-        }
-
-        if (!isEmbedded.current) {
-            if (dialogboxList[dialogboxList.length - 1].dialogboxId != dialogboxId.current) {
-                return
-            }
-        }
-
-        onCancel();
-
-        validFunction(afterMaskClick, e)
     }
 
     const onOk = () => {
@@ -266,40 +237,20 @@ const Dialogbox = (props: IDialogboxProps) => {
             let toRight = curCLientX - pointLeft + right;
 
             let toBottom = curCLientY - pointTop + bottom;
-            const extendMaskDOMX = document.querySelector('.dialogbox-extend-mask-x');
-            const extendMaskDOMY = document.querySelector('.dialogbox-extend-mask-y');
+
             if (event.clientX < 10) {
-                if (!extendMaskDOMX.className.includes('dialogbox-extend-mask-in-x')) {
-                    extendMaskDOMX.className = ' dialogbox-extend-mask-x mask-in-left'
-                }
+                store.maskXClassList.add('mask-in-left');
             }
             else if (event.clientX > document.body.clientWidth - 10) {
-                if (!extendMaskDOMX.className.includes('dialogbox-extend-mask-in-x')) {
-                    extendMaskDOMX.className = ' dialogbox-extend-mask-x mask-in-right'
-                }
+                store.maskXClassList.add('mask-in-right')
             } else if (event.clientY < 0) {
-                if (!extendMaskDOMY.className.includes('dialogbox-extend-mask-in-y')) {
-                    extendMaskDOMY.className = ' dialogbox-extend-mask-y mask-in-top'
-                }
+                store.maskYClassList.add('mask-in-top')
             }
             else if (event.clientY > document.body.clientHeight) {
-                if (!extendMaskDOMY.className.includes('dialogbox-extend-mask-in-y')) {
-                    extendMaskDOMY.className = ' dialogbox-extend-mask-y mask-in-bottom'
-                }
+                store.maskYClassList.add('mask-in-bottom')
             }
             else {
-                if (extendMaskDOMX.className.includes('mask-in-left')) {
-                    extendMaskDOMX.className = 'dialogbox-extend-mask-x'
-                }
-                if (extendMaskDOMX.className.includes('mask-in-right')) {
-                    extendMaskDOMX.className = 'dialogbox-extend-mask-x mask-out-right'
-                }
-                if (extendMaskDOMY.className.includes('mask-in-top')) {
-                    extendMaskDOMY.className = 'dialogbox-extend-mask-y mask-out-top'
-                }
-                if (extendMaskDOMY.className.includes('mask-in-bottom')) {
-                    extendMaskDOMY.className = 'dialogbox-extend-mask-y mask-out-bottom'
-                }
+                store.clearMaskXY()      
             }
 
             setState({
@@ -312,10 +263,7 @@ const Dialogbox = (props: IDialogboxProps) => {
         }
 
         const onmouseup = (event) => {
-            const extendMaskDOMX = document.querySelector('.dialogbox-extend-mask-x');
-            const extendMaskDOMY = document.querySelector('.dialogbox-extend-mask-y');
-            extendMaskDOMX.className = 'dialogbox-extend-mask-x';
-            extendMaskDOMY.className = 'dialogbox-extend-mask-y';
+            store.clearMaskXY()
             //鼠标松开后清除移动事件
             if (event.clientY < 0 || event.clientY > document.body.clientHeight) {
                 handleExtend();
@@ -468,15 +416,6 @@ const Dialogbox = (props: IDialogboxProps) => {
         // 如果是通过open方法打开，需要单独判断是否初始全屏
         if (byOpen && fullScreen) {
             handleExtend(true)
-        }
-
-        // 注册点击阴影触发onCancel事件
-        isEmbedded.current = !!!document.getElementById('dialogbox-wrapper-' + dialogboxId.current);
-
-        if (!isEmbedded.current) {
-            document.getElementById('dialogbox-root').addEventListener('click', handleMaskClick)
-        } else {
-            document.querySelector('.dialogbox-mask').addEventListener('click', handleMaskClick)
         }
 
         return () => {
@@ -635,7 +574,6 @@ const Dialogbox = (props: IDialogboxProps) => {
             }
         </div>
     )
-
-}
+}))
 
 export default Dialogbox;

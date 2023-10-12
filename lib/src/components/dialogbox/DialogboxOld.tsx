@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import Button from './Button';
+import Button from '../../Button';
 import { IDialogboxProps } from './Dialogbox.d';
 import './dialogbox.less';
-import store from './store/DialogboxStore';
+import store from '../../store/DialogboxStore';
 import * as classnames from 'classnames';
 
 const { validFunction } = store

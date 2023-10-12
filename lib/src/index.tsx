@@ -1,8 +1,9 @@
 import * as React from 'react';
-import Dialogbox from './Dialogbox';
+import Dialogbox from './components/dialogbox/Dialogbox';
 // import Dialogbox from './DialogboxHook';
 import dialogboxMethod from './method/DialogboxMethod';
-import { IDialogboxProps } from './Dialogbox.d';
+import { IDialogboxProps } from './components/dialogbox/Dialogbox.d';
+import './common/scrollbar.less';
 
 const DragDialogbox = (props: IDialogboxProps) => {
     const _props = { ...dialogboxMethod.options, ...props };

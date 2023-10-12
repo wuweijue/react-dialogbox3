@@ -2,7 +2,7 @@ import * as ReactDOM from 'react-dom';
 import * as React from 'react';
 import DialogboxStore from '../store/DialogboxStore';
 import IDialogboxMethod, { IDialogbox, IOptions } from './DialogboxMethod.d';
-import Dialogbox from '../Dialogbox';
+import Dialogbox from '../components/dialogbox/Dialogbox';
 
 class DialogboxMethod implements IDialogboxMethod {
 

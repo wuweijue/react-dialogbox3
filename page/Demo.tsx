@@ -7,6 +7,7 @@ import Api from './components/Api';
 import { ConfigProvider, theme } from 'antd';
 import Explain from './components/Explain';
 import Home from './components/Home';
+import Provider from '../lib/src/components/provider/Provider';
 class DialogDemo extends React.Component {
 
     state = {
@@ -50,12 +51,12 @@ class DialogDemo extends React.Component {
             {
                 key: '1',
                 title: '使用指南',
-                component: <Code theme={this.state.theme}/>
+                component: <Code theme={this.state.theme} />
             },
             {
                 key: '2',
                 title: '功能演示',
-                component: <Show theme={this.state.theme}/>
+                component: <Show theme={this.state.theme} />
             },
             {
                 key: '3',
@@ -70,23 +71,24 @@ class DialogDemo extends React.Component {
         ]
 
         return <div className={`dialogDemo ${this.state.theme}`} >
-            <ConfigProvider
-                theme={{
-                    token: {
-                        colorPrimary: '#9E339F',
-                        
-                    },
-                    components: {
-                        Button: {
-                            borderRadius: 8,
-                        }
-                    },
-                    algorithm: this.state.theme === 'dark' ? theme.darkAlgorithm : undefined
-                }}
-            >
-                <Tab tabList={tabList} activeKey={activeKey} onChange={(key) => this.setState({ activeKey: key })} />
-            </ConfigProvider>
+            <Provider>
+                <ConfigProvider
+                    theme={{
+                        token: {
+                            colorPrimary: '#9E339F',
 
+                        },
+                        components: {
+                            Button: {
+                                borderRadius: 8,
+                            }
+                        },
+                        algorithm: this.state.theme === 'dark' ? theme.darkAlgorithm : undefined
+                    }}
+                >
+                    <Tab tabList={tabList} activeKey={activeKey} onChange={(key) => this.setState({ activeKey: key })} />
+                </ConfigProvider>
+            </Provider>
         </div>
     }
 }

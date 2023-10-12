@@ -1,4 +1,4 @@
-import { IDialogboxProps } from '../Dialogbox.d'
+import { IDialogboxProps } from '../components/dialogbox/Dialogbox.d';
 
 export default interface IDialogboxMethod {
 
@@ -28,12 +28,6 @@ export default interface IDialogboxMethod {
     */
     hideAllDialogbox(): void
 
-    /**
-    * @description 设置全局配置
-    * @param options IOpenOptions对象
-    */
-    setOption(options: IOptions): void
-
 }
 
 export interface IOptions extends IDialogboxProps {
@@ -57,9 +51,4 @@ export interface IDialogbox{
      * 关闭当前节点的方法
      */
     close(): void
-
-    /**
-     * 对话框react元素
-     */
-    reactElement: JSX.Element
 }

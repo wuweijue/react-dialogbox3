@@ -72,15 +72,12 @@ class Tab extends React.Component<ITabViewProps, any> {
                             return <button onClick={() => {
                                 onChange && onChange(item.key)
                             }} className={classNames('tab-bar-item', {'tab-bar-logo': item.key === '-1' }, { 'active': activeKey === item.key })} key={item.key || idx}>
+                                {/* <div className="container">
+                                    
+                                </div> */}
                                 <div className={classNames('tab-bar-item-active-tip', { 'active': activeKey === item.key })}></div>
                                 <div className='tab-bar-item-title' >
                                     {item.title}
-                                </div>
-                                <div className={classNames('tab-bar-item-active-close', { 'disClosable': item.closable === false })} onClick={() => {
-                                    onClose && onClose(item.key)
-                                }}>
-                                    <div className="close-line"></div>
-                                    <div className="close-line"></div>
                                 </div>
                             </button>
                         })

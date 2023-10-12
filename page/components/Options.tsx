@@ -12,7 +12,7 @@ type OptionsType = {
 }
 
 const Options = (props) => {
-    const style = props.theme === 'dark' ? codeStyle.vs2015 : codeStyle.xcode
+    const style = props.theme === 'dark' ? codeStyle.vs2015 : codeStyle.xcode;
     const [state, setState] = useState<OptionsType>({
         title: 'react-dialogbox',
         mask: true,
