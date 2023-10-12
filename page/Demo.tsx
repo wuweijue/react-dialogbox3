@@ -8,6 +8,7 @@ import { ConfigProvider, theme } from 'antd';
 import Explain from './components/Explain';
 import Home from './components/Home';
 import Provider from '../lib/src/components/provider/Provider';
+
 class DialogDemo extends React.Component {
 
     state = {
