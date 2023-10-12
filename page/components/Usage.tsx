@@ -1,7 +1,8 @@
-import './code.less';
+import './usage.less';
 import React from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import * as codeStyle from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { Sandpack } from "@codesandbox/sandpack-react";
 
 const EmbeddedClassComponentCode = (
     `
@@ -221,11 +222,19 @@ const setConfigCode = (
 const CodeView = (props) => {
     const style = props.theme === 'dark' ? codeStyle.vs2015 : codeStyle.xcode
     return <div className="codeView">
-        <div className='install'>
+        <div id='install'>
             <h3 className='title'>安装</h3>
-            <SyntaxHighlighter language="shell" style={style}>
-                {installCode}
-            </SyntaxHighlighter>
+            <Sandpack template="react" theme={'dark'}/>
+            <div className='code'>
+                <span>yarn</span>
+                <span>add</span>
+                <span>react-dialogbox</span>
+            </div>
+            <div className='code'>
+                <span>npm</span>
+                <span>install</span>
+                <span>react-dialogbox</span>
+            </div>
         </div>
 
         <div className="embedded">

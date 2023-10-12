@@ -29,6 +29,7 @@
     "push": "https://wuweijue.github.io/react-dialogbox/"
   },
   "dependencies": {
+    "@codesandbox/sandpack-react": "^2.9.0",
     "@reduxjs/toolkit": "^1.9.7",
     "@types/classnames": "^2.3.1",
     "@types/react-monaco-editor": "^0.16.0",

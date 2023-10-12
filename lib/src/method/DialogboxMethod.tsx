@@ -1,6 +1,5 @@
 import * as ReactDOM from 'react-dom';
 import * as React from 'react';
-import DialogboxStore from '../store/DialogboxStore';
 import IDialogboxMethod, { IDialogbox, IOptions } from './DialogboxMethod.d';
 import Dialogbox from '../components/dialogbox/Dialogbox';
 
@@ -10,43 +9,6 @@ class DialogboxMethod implements IDialogboxMethod {
 
     private createDialogbox = (dialogbox, options) => {
 
-        const dialogboxId = DialogboxStore.focusZIndex + 1; //保证生成的dialogbox初始时在最上层
-        const containerNode = options.containerNode || document.body;
-
-        let dialogboxRoot = document.querySelector('#dialogbox-root');
-
-        //若不存在#dialogbox-root根节点，则创建一个用于承载dialogbox
-        if (!dialogboxRoot) {
-            dialogboxRoot = document.createElement('div');
-            dialogboxRoot.setAttribute('id', 'dialogbox-root');
-            containerNode.appendChild(dialogboxRoot);                     
-        }
-
-        const maskX = document.querySelector('.dialogbox-extend-mask-x')
-        if(!maskX){
-            const extendMaskDOMX = document.createElement('div');
-            const extendMaskDOMY = document.createElement('div');
-            extendMaskDOMX.className = 'dialogbox-extend-mask-x';
-            extendMaskDOMY.className = 'dialogbox-extend-mask-y'; 
-            document.body.appendChild(extendMaskDOMX);
-            document.body.appendChild(extendMaskDOMY);
-        }
-
-        //由于ReactDOM.render方法会清空内部元素，所以需要一个中间层wrapper用于渲染
-        const dialogboxWrapper = document.createElement('div');
-        dialogboxWrapper.setAttribute('id', `dialogbox-wrapper-${dialogboxId}`);
-        dialogboxWrapper.setAttribute('class', 'dialogbox-wrapper');
-        dialogboxRoot.appendChild(dialogboxWrapper);
-
-        //利用ReactDOM渲染dialogbox
-        const reactElement = (ReactDOM.render(dialogbox, document.getElementById('dialogbox-wrapper-' + dialogboxId)) as any);
-
-        return {
-            DOM: document.getElementById('dialogbox-' + dialogboxId),
-            dialogboxId,
-            close: () => this.hideDialogbox(dialogboxId),
-            reactElement
-        };
     }
 
     /**
@@ -60,21 +22,21 @@ class DialogboxMethod implements IDialogboxMethod {
         * }
         */
     public open = (options: IOptions = this.options): IDialogbox => {
-        const dialogboxId = DialogboxStore.focusZIndex + 1;
-        const dialogboxComponent = <Dialogbox
-            visible={true}
-            onOk={() => {
-                this.hideDialogbox(dialogboxId)
-            }}
-            onCancel={() => {
-                this.hideDialogbox(dialogboxId)
-            }}
-            byOpen={true}
-            {...options}
-        >
-            {options.children}
-        </Dialogbox>;
-        return this.createDialogbox(dialogboxComponent, options)
+        // const dialogboxId = DialogboxStore.focusZIndex + 1;
+        // const dialogboxComponent = <Dialogbox
+        //     visible={true}
+        //     onOk={() => {
+        //         this.hideDialogbox(dialogboxId)
+        //     }}
+        //     onCancel={() => {
+        //         this.hideDialogbox(dialogboxId)
+        //     }}
+        //     byOpen={true}
+        //     {...options}
+        // >
+        //     {options.children}
+        // </Dialogbox>;
+        // return this.createDialogbox(dialogboxComponent, options)
     }
 
     /**
@@ -89,7 +51,7 @@ class DialogboxMethod implements IDialogboxMethod {
         * }
         */
     public showDialogbox = (dialogbox: JSX.Element, options = this.options): IDialogbox => {
-        return this.createDialogbox(dialogbox, options)
+        // return this.createDialogbox(dialogbox, options)
     }
 
     /**
@@ -126,11 +88,11 @@ class DialogboxMethod implements IDialogboxMethod {
     public hideAllDialogbox(): void {
         const dialogboxRootDOM = document.querySelector('#dialogbox-root');
         if (dialogboxRootDOM) {
-            DialogboxStore.dialogboxList.forEach(item => {
-                const dialogboxWrapperDOM = document.querySelector('#dialogbox-wrapper-' + item.dialogboxId);
-                ReactDOM.unmountComponentAtNode(dialogboxWrapperDOM);
-            })
-            dialogboxRootDOM.parentNode.removeChild(dialogboxRootDOM);
+            // DialogboxStore.dialogboxList.forEach(item => {
+            //     const dialogboxWrapperDOM = document.querySelector('#dialogbox-wrapper-' + item.dialogboxId);
+            //     ReactDOM.unmountComponentAtNode(dialogboxWrapperDOM);
+            // })
+            // dialogboxRootDOM.parentNode.removeChild(dialogboxRootDOM);
         } else {
             console.warn('当前并无显示的对话框')
         }

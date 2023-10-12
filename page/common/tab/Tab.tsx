@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import './Tab.less';
+import AsideRight from '../aside/AsideRight';
 
 interface Item {
     title: JSX.Element | string;
@@ -69,7 +70,7 @@ class Tab extends React.Component<ITabViewProps, any> {
                         tabList.map((item, idx) => {
                             return <button onClick={() => {
                                 onChange && onChange(item.key)
-                            }} className={classNames('tab-bar-item', {'tab-bar-logo': item.key === '-1' }, { 'active': activeKey === item.key })} key={item.key || idx}>
+                            }} className={classNames('tab-bar-item', { 'tab-bar-logo': item.key === '-1' }, { 'active': activeKey === item.key })} key={item.key || idx}>
                                 {/* <div className="container">
                                     
                                 </div> */}
@@ -87,8 +88,16 @@ class Tab extends React.Component<ITabViewProps, any> {
                 <div className='tab-component-list' style={{ marginLeft: `${this.getTranslateDistance(tabList, activeKey, width)}px` }}>
                     {
                         tabList.map((item, idx) => {
-                            return <div className='tab-component-item' style={{ width: width ? width : '100%', }} key={item.key || idx}>
-                                {item.component}
+                            return <div className='tab-component-item' 
+                                style={{ 
+                                    width: width ? width : '100%', 
+                                    
+                                }} 
+                                key={item.key || idx}>
+                                <div className="item-container">
+                                    {item.component}
+                                </div>
+                                {Number(activeKey) > - 1 && <AsideRight activeKey={activeKey} />}
                             </div>
                         })
                     }

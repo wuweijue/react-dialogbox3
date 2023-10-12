@@ -79,7 +79,12 @@
 
         .tab-component-wrapper {
             .tab-component-item {
+                display: flex;
                 background-color: #141414;
+                .item-container {
+                    background-color: #141414;
+                    flex: 1;
+                }
             }
         }
     }
@@ -247,11 +252,18 @@
                 width: 0;
 
                 .tab-component-item {
+                    
                     overflow-x: hidden;
-                    display: inline-block;
+                    display: inline-flex;
                     height: 100%;
                     vertical-align: top;
-                    padding: 12px;
+                    width: 0;
+                    
+                    .item-container {
+                        padding: 24px 252px 12px 24px;
+                        width: 200px;
+                        flex: 1;
+                    }
                 }
             }
         }
