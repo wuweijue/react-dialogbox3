@@ -223,9 +223,6 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
         //当鼠标按下后拖动时触发
 
         const onmousemove = (event) => {
-            if (validFunction(props.beforeDragMove, event)) {
-                return
-            }
 
             //避免拖动过程中文本被选中
             window.getSelection ? window.getSelection().removeAllRanges() : (document as any).selection.empty();
@@ -279,7 +276,6 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
             document.removeEventListener('mousemove', onmousemove);
             document.removeEventListener('mouseup', onmouseup);
 
-            validFunction(props.afterDragMove, event)
         }
 
         document.addEventListener('mousemove', onmousemove);

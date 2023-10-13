@@ -1,6 +1,7 @@
 import { action, makeAutoObservable } from 'mobx';
 
 interface dialogboxItem {
+    component?: JSX.Element,
     dialogboxId: number,
     isModal: boolean,
     onOk(): void
@@ -159,7 +160,9 @@ class Store {
 
     @action createDialogbox (dialogbox, options) {
         const dialogboxId = this.focusZIndex + 1; 
-
+        this.dialogboxList.push({
+            component: dialogbox,
+        })
         return dialogboxId
     }
 }

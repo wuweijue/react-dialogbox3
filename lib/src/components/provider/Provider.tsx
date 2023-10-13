@@ -16,7 +16,7 @@ const Provider = inject('store')(observer((props) => {
 
     const { maskVisible, maskClassList, maskXClassList, maskYClassList, validFunction, focusItem } = store;
 
-    const handleMaskClick = (e) => {
+    const handleMaskClick = () => {
         if (!focusItem.maskClosable) {
             return
         }
@@ -30,6 +30,7 @@ const Provider = inject('store')(observer((props) => {
         <div
             style={{ display: maskVisible ? 'block' : 'none' }}
             className={Array.from(maskClassList).join(' ')}
+            onClick={handleMaskClick}
         ></div>
 
 
