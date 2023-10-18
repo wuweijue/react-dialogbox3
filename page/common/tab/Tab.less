@@ -79,7 +79,12 @@
 
         .tab-component-wrapper {
             .tab-component-item {
+                display: flex;
                 background-color: #141414;
+                .item-container {
+                    background-color: #141414;
+                    flex: 1;
+                }
             }
         }
     }
@@ -130,7 +135,7 @@
                         padding-right: 0;
 
                         .tab-bar-item-title {
-                            padding-right: 20px;
+                            padding-right: 16px;
                             // border-right: 1px solid rgba(255, 255, 255, 0.4);
                             // line-height: 20px;
                         }
@@ -247,11 +252,18 @@
                 width: 0;
 
                 .tab-component-item {
+                    
                     overflow-x: hidden;
-                    display: inline-block;
+                    display: inline-flex;
                     height: 100%;
                     vertical-align: top;
-                    padding: 12px;
+                    width: 0;
+                    
+                    .item-container {
+                        padding: 24px 24px 12px 24px;
+                        width: 200px;
+                        flex: 1;
+                    }
                 }
             }
         }

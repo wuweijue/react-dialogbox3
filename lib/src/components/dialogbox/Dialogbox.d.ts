@@ -2,9 +2,11 @@ import * as React from 'react';
 
 export type IDialogboxProps = {
 
-    store
+    close?(): void
 
-    theme?: 'light' | 'dark'
+    minimize?(): void
+
+    store?
 
     byOpen?: boolean
 
@@ -44,29 +46,13 @@ export type IDialogboxProps = {
 
     footer?: string | JSX.Element | boolean
 
-    beforeMaskClick?(event?: React.SyntheticEvent): undefined | boolean
-
-    afterMaskClick?(event?: React.SyntheticEvent)
-
-    beforeDragMove?(event?: MouseEvent): undefined | boolean
-
-    afterDragMove?(event?: MouseEvent)
-
-    beforeDragScale?(event?: MouseEvent): undefined | boolean
-
-    afterDragScale?(event?: MouseEvent)
-
-    beforeExtend?(event?: MouseEvent): undefined | boolean
-
-    afterExtend?(event?: MouseEvent)
-
     afterClose?(): void
 
     onOk?(): void
 
     onCancel?(): void
 
-    children?: JSX.Element | string
+    children?: React.JSX.Element | string | undefined
 
 }
 

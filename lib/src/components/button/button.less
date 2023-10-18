@@ -1,0 +1,93 @@
+.dialogbox-button {
+
+    &:hover,
+    &:active {
+        opacity: 0.8;
+        border: 1px solid #d9d9d9;
+    }
+
+    position : relative;
+    display : inline-block;
+    font-weight : 400;
+    white-space : nowrap;
+    text-align : center;
+    box-shadow : 0 2px 0 rgb(0 0 0 / 2%);
+    cursor : pointer;
+    transition : all .3s cubic-bezier(.645, .045, .355, 1);
+    -webkit-user-select: none;
+    -moz-user-select : none;
+    -ms-user-select : none;
+    user-select : none;
+    touch-action : manipulation;
+    height : 28px;
+    padding : 4px 15px;
+    font-size : 14px;
+    border-radius : 6px;
+    color : rgba(0, 0, 0, .85);
+    background : #fff;
+    border : 1px solid #d9d9d9;
+
+    &.primary {
+        color: white;
+        background-color: #0170FE;
+        border-color: #0170FE;
+    }
+
+    font-family : '黑体';
+
+    &.macos-btn {
+        height: 24px;
+        line-height: 16px;
+        box-shadow: 1px 1px 1px #ccc;
+
+        &.primary {
+            background-color: #146CFF;
+            color: white;
+            box-shadow: 1px 1px 1px #146CFF;
+            border-color: #146CFF;
+        }
+
+        font-weight : bold;
+
+    }
+
+    span {
+        display: inline-block;
+    }
+}
+
+.windows {
+    .dialogbox-button {
+
+        &:hover {
+            opacity: 0.8;
+        }
+    }
+}
+
+button {
+    /* 去除默认样式 */
+    position: relative;
+    display: block;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-size: 18px;
+    text-align: center;
+    text-decoration: none;
+    line-height: 1;
+    -webkit-tap-highlight-color: transparent;
+    // overflow: hidden;
+    border: none;
+
+    /* 去除边框样式 */
+    ::after {
+        border: 0;
+    }
+
+    /* 去除禁用时样式 */
+    [disabled] {
+        background-color: #fff;
+        color: #666;
+    }
+}

@@ -1,7 +1,7 @@
 import { action, makeAutoObservable } from 'mobx';
 
 interface dialogboxItem {
-    component?: JSX.Element,
+    component?: boolean,
     dialogboxId: number,
     isModal: boolean,
     onOk(): void
@@ -11,29 +11,23 @@ interface dialogboxItem {
 }
 
 class Store {
-
     constructor() {
         makeAutoObservable(this);
         // 注册键盘事件
         document.addEventListener('keydown', (event) => {
-
             if (this.isAllDialogboxHide) return;
 
-            // 找到此时被聚焦的对话框
             const focusId = this.focusItem.dialogboxId;
-
-            const instance = this.findItemById(focusId);
-
-            if (!instance) return;
+            const { item } = this.getDialogboxById(focusId);
 
             if (event.key === 'Enter') {
                 event.preventDefault();
-                this.validFunction(instance.onOk)
+                this.validFunction(item.onOk)
             }
 
             if (event.key === 'Escape') {
                 event.preventDefault();
-                this.validFunction(instance.onCancel)
+                this.validFunction(item.onCancel)
             }
         })
     }
@@ -46,6 +40,34 @@ class Store {
     maskYClassList = new Set(["dialogbox-extend-mask-y"])
     maskVisible = false
 
+    // 获取当前被聚焦的元素
+    get focusItem() {
+        return ((this.dialogboxList.length && this.dialogboxList[this.dialogboxList.length - 1]) as dialogboxItem)
+    }
+
+    // 判断是否当前所有对话框均已隐藏
+    get isAllDialogboxHide() {
+        return this.dialogboxList.every(item => !item.visible)
+    }
+
+    // 判断是否当前所有对话框均已隐藏或无遮罩层
+    get isDialogboxMask() {
+        return !!this.dialogboxList.find(item => item.visible && item.mask);
+    }
+
+    get needMask() {
+        return
+    }
+
+    getDialogboxById(dialogboxId) {
+        let idx = this.dialogboxList.findIndex(item => item.dialogboxId == dialogboxId);
+        let item = this.dialogboxList[idx];
+        return {
+            idx,
+            item
+        }
+    }
+
     validFunction = (callback, event?) => {
         if (!callback || typeof callback !== 'function') {
             return false
@@ -53,23 +75,35 @@ class Store {
         return callback(event)
     }
 
-    // 获取当前被聚焦的元素
-    get focusItem() {
-        return ((this.dialogboxList.length && this.dialogboxList[this.dialogboxList.length - 1]) as dialogboxItem)
-    }
-
-    // 获取dialogboxId对应的对话框react对象
-    findItemById(dialogboxId: number) {
-        return (this.dialogboxList.find(item => {
-            return item.dialogboxId == dialogboxId;
-        }) as dialogboxItem);
+    @action addMaskXY(direction) {
+        if(direction === 'left' || direction === 'right') {
+            this.maskXClassList.add('mask-in-' + direction)
+        } else {
+            this.maskYClassList.add('mask-in-' + direction)
+        }
     }
 
     @action clearMaskXY() {
-        this.maskXClassList.delete('mask-in-left');
-        this.maskXClassList.delete('mask-in-right');
-        this.maskYClassList.delete('mask-in-top');
-        this.maskYClassList.delete('mask-in-bottom');
+        if (this.maskXClassList.has('mask-in-left')) {
+            this.maskXClassList.delete('mask-out-right')
+            this.maskXClassList.delete('mask-in-left');
+            this.maskXClassList.add('mask-out-left');
+        }
+        if (this.maskXClassList.has('mask-in-right')) {
+            this.maskXClassList.delete('mask-in-right');
+            this.maskXClassList.delete('mask-out-left');
+            this.maskXClassList.add('mask-out-right');
+        }
+        if (this.maskYClassList.has('mask-in-top')) {
+            this.maskYClassList.delete('mask-in-bottom');
+            this.maskYClassList.delete('mask-in-top');
+            this.maskYClassList.add('mask-out-top');
+        }
+        if (this.maskYClassList.has('mask-in-bottom')) {
+            this.maskYClassList.delete('mask-in-top');
+            this.maskYClassList.delete('mask-in-bottom');
+            this.maskYClassList.add('mask-out-bottom');
+        }    
     }
 
     // 注册新生成的对话框
@@ -98,6 +132,7 @@ class Store {
 
     @action changeDialogboxVisible(dialogboxId, visible) {
         const { idx } = this.getDialogboxById(dialogboxId);
+        if (!this.dialogboxList[idx]) return;
         this.dialogboxList[idx].visible = visible;
         if (visible == true) {
             this.promoteZIndex(dialogboxId)
@@ -105,43 +140,25 @@ class Store {
         this.changeMask();
     }
 
+    @action hideAllDialogbox() {
+        this.dialogboxList.forEach(item => {
+            if (item.component) {
+                item.visible = false
+            }
+        })
+        this.changeMask();
+    }
+
     // 当对话框出现或隐藏时去同步遮罩层的状态
     @action changeMask() {
         const isMask = this.isDialogboxMask;
 
-        if (isMask) {
-            if (this.maskVisible) {
-                const maskDOM = document.createElement('div');
-                maskDOM.classList.add('dialogbox-mask');
-                document.body.appendChild(maskDOM);
-            } else {
-                this.maskClassList.delete('dialogbox-mask-out')
-            }
-        } else {
-            if (this.maskVisible) {
-                if (this.maskClassList.has('.dialogbox-mask-out')) {
-                    this.maskClassList.add('dialogbox-mask-out');
-                }
-            }
+        if (isMask && !this.maskVisible) {
+            this.maskClassList.delete('dialogbox-mask-out')
         }
-    }
 
-    // 判断是否当前所有对话框均已隐藏
-    get isAllDialogboxHide() {
-        return this.dialogboxList.every(item => !item.visible)
-    }
-
-    // 判断是否当前所有对话框均已隐藏或无遮罩层
-    get isDialogboxMask() {
-        return !!this.dialogboxList.find(item => item.visible && item.mask);
-    }
-
-    getDialogboxById(dialogboxId) {
-        let idx = this.dialogboxList.findIndex(item => item.dialogboxId == dialogboxId);
-        let item = this.dialogboxList[idx];
-        return {
-            idx,
-            item
+        if (!isMask && this.maskVisible) {
+            this.maskClassList.add('dialogbox-mask-out');
         }
     }
 
@@ -158,12 +175,34 @@ class Store {
         return ++this.focusZIndex;
     }
 
-    @action createDialogbox (dialogbox, options) {
-        const dialogboxId = this.focusZIndex + 1; 
+    @action createDialogbox(options) {
+        const { isModal = false } = options;
+        const dialogboxId = this.focusZIndex + 1;
         this.dialogboxList.push({
-            component: dialogbox,
+            ...options,
+            isModal,
+            dialogboxId,
+            component: true
         })
+        this.changeMask();
         return dialogboxId
+    }
+
+    @action closeDialogbox(dialogboxId?) {
+        if (dialogboxId) {
+            const { idx, item } = this.getDialogboxById(dialogboxId);
+            if (item) {
+                this.dialogboxList[idx].visible = false;
+                setTimeout(() => {
+                    this.dialogboxList.splice(idx, 1)
+                }, 450)
+            }
+        } else {
+            this.dialogboxList = this.dialogboxList.filter(item => {
+                return !item.component
+            })
+        }
+        this.changeMask();
     }
 }
 

@@ -4,7 +4,7 @@ import MonacoEditor from 'react-monaco-editor';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import * as codeStyle from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import './options.less';
-import { open, hideDialogbox } from '../../lib/src';
+import { showDialogbox, Dialogbox, openDialogbox } from '../../lib/src';
 
 type OptionsType = {
     footer?: string | null | boolean;
@@ -13,6 +13,7 @@ type OptionsType = {
 
 const Options = (props) => {
     const style = props.theme === 'dark' ? codeStyle.vs2015 : codeStyle.xcode;
+    const [visible, setVisible] = useState(false);
     const [state, setState] = useState<OptionsType>({
         title: 'react-dialogbox',
         mask: true,
@@ -35,7 +36,7 @@ const Options = (props) => {
 
     const formatCode = (state) => {
         return (
-`
+            `
 import { Dialogbox } from 'react-dialogbox';
 
 const App = () => {
@@ -62,27 +63,41 @@ export default App
         )
     }
 
+    const _props = {
+        onCancel() {
+            setVisible(false)
+        },
+        isModal: true,
+        title,
+        mask,
+        maskClosable,
+        width,
+        height,
+        fullScreen,
+        header,
+        theme,
+        footer: footerNum === 2 ? false : (footerNum === 1 ? true : footerContent),
+        draggable,
+
+    }
     return <div className="options">
         <div className="top">
+            {/* <Dialogbox
+                {..._props}
+                visible={visible}
+            >
+                {children}
+            </Dialogbox> */}
             <Button type='primary'
                 onClick={() => {
-                    const { dialogboxId } = open({
-                        onCancel() {
-                            hideDialogbox(dialogboxId)
-                        },
-                        isModal: true,
-                        title,
-                        mask,
-                        maskClosable,
-                        width,
-                        height,
-                        fullScreen,
-                        header,
-                        theme,
-                        footer: footerNum === 2 ? false : (footerNum === 1 ? true : footerContent),
-                        draggable,
-                        children
+                    const { close } = openDialogbox({
+                        ..._props,
+                        visible: true,
+                        onCancel: ()=>{
+                            close()
+                        }
                     })
+                    // setVisible(true)
                 }}
             >弹出对话框</Button>
         </div>

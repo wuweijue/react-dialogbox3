@@ -1,17 +1,18 @@
 import * as React from 'react';
-import Tab from './tab/Tab';
+import Tab from './common/tab/Tab';
 import Options from './components/Options';
-import Code from './components/Code';
 import Show from './components/Show';
 import Api from './components/Api';
 import { ConfigProvider, theme } from 'antd';
 import Explain from './components/Explain';
 import Home from './components/Home';
 import Provider from '../lib/src/components/provider/Provider';
+import Usage from './components/Usage';
+
 class DialogDemo extends React.Component {
 
     state = {
-        activeKey: '-1',
+        activeKey: '1',
         theme: 'dark'
     }
 
@@ -45,14 +46,15 @@ class DialogDemo extends React.Component {
             },
             {
                 key: '0',
-                title: '配置示例',
-                component: <Options theme={this.state.theme} />
+                title: '使用指南',
+                component: <Usage theme={this.state.theme} />
             },
             {
                 key: '1',
-                title: '使用指南',
-                component: <Code theme={this.state.theme} />
+                title: '配置示例',
+                component: <Options theme={this.state.theme} />
             },
+           
             {
                 key: '2',
                 title: '功能演示',
@@ -87,6 +89,7 @@ class DialogDemo extends React.Component {
                     }}
                 >
                     <Tab tabList={tabList} activeKey={activeKey} onChange={(key) => this.setState({ activeKey: key })} />
+                    
                 </ConfigProvider>
             </Provider>
         </div>

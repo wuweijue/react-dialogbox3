@@ -1,5 +1,5 @@
 import * as classNames from 'classnames';
-import Button from '../../Button';
+import Button from '../button/Button';
 import { IDialogboxProps } from './Dialogbox.d';
 import './dialogbox.less';
 import * as React from 'react';
@@ -7,11 +7,25 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { inject, observer } from 'mobx-react';
 
 const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
-    const dialogboxId = useRef(null);
-    const isEmbedded = useRef(false); // 是否是内嵌在组件中的
-    const dom = useRef<HTMLDivElement | null>() // 对话框最外层元素 DOM
+
     const store = props.store;
     const { validFunction } = store;
+
+    const ref = useRef<{
+        dialogboxId: number,
+        isEmbedded: boolean,
+        dom: HTMLDivElement | null,
+        isMount: boolean,
+        timeout: number
+    }>({
+        dialogboxId: store.focusZIndex + 1,
+        isEmbedded: false,
+        dom: null,
+        isMount: true,
+        timeout: 0
+    });
+
+    const { dialogboxId, dom, isMount, timeout } = ref.current;
 
     const computerLayout = useMemo(() => {
         let width = 400, height = 180;
@@ -62,45 +76,32 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
         }
 
         //保证宽高不小于最小值
-        return {
-            height: height < 120 ? 120 : height,
-            width: width < 120 ? 120 : width,
-            marginTop: 0 - 0.5 * height,
-            marginLeft: 0 - 0.5 * width,
-        }
+        return [
+            width < 120 ? 120 : width,
+            height < 120 ? 120 : height,
+            0 - 0.5 * height,
+            0 - 0.5 * width,
+        ]
     }, [])
 
-    const { width, height, marginTop, marginLeft } = computerLayout;
+    const [initWidth, initHeight, initMarginTop, initMarginLeft] = computerLayout;
 
-    const {
-        visible,
-        draggable = true,
-        title, isModal,
-        byOpen, fullScreen,
-        header = true,
-        headerStyle,
-        footer,
-        okText,
-        cancelText,
-        footerStyle,
-        className: propsClassName,
-        maskClosable,
-        beforeMaskClick,
-        afterMaskClick
+    const { draggable = true, title, isModal, header = true, headerStyle, footer, okText, cancelText, footerStyle, className: propsClassName,
     } = props;
 
     const [state, setState] = useState({
-        width,
-        height,
+        visible: props.visible,
+        width: initWidth,
+        height: initHeight,
         toRight: 0, // 向右的偏移量
         toBottom: 0, // 向下的偏移量
         isExtend: false,
         draggable,//是否可拖拽
-        zIndex: dialogboxId.current, // 控制层级    
-        marginTop, //让表单初始时保持居中
-        marginLeft, //让表单初始时保持居中
-        historyWidth: width,
-        historyHeight: height,
+        zIndex: dialogboxId, // 控制层级    
+        marginTop: initMarginTop, //让表单初始时保持居中
+        marginLeft: initMarginLeft, //让表单初始时保持居中
+        historyWidth: initWidth,
+        historyHeight: initHeight,
         title,
         transition: 'none',
         historyToBottom: 0,
@@ -114,7 +115,7 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
         }
 
         let foucsItemIsModal = focusItem.isModal;
-        if ((focusItem.dialogboxId !== dialogboxId.current) && (foucsItemIsModal || isModal)) {
+        if ((focusItem.dialogboxId !== dialogboxId) && (foucsItemIsModal || isModal)) {
             // 如果被聚焦的dialogbox是个模态框，或当前选中的dialogbox是个模态框则无法操作其它模态框
             return false
         }
@@ -126,6 +127,7 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
         if (!controllable()) return;
         let { clientWidth, clientHeight } = document.body;
         let marginTop, marginLeft, toRight, toBottom;
+        let newIsExtend = false;
         let { draggable, isExtend, historyToBottom, historyToRight, height, width, historyWidth, historyHeight } = state;
         if (value === false && !isExtend) return;
         if (!isExtend || value) {
@@ -137,6 +139,7 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
             marginLeft = 0;
             toRight = 0;
             draggable = false;
+            newIsExtend = true;
             if (direction === 'left') {
                 width *= 0.5;
             }
@@ -155,33 +158,36 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
             marginLeft = 0 - 0.5 * width;
         }
         const callback = () => {
+            const newState = {
+                historyWidth: state.width,
+                historyHeight: state.height,
+                marginTop,
+                marginLeft,
+                toRight,
+                toBottom,
+                draggable,
+                historyToBottom: state.toBottom,
+                historyToRight: state.toRight,
+                isExtend: newIsExtend,
+                width,
+                height,
+                transition: '0.4s'
+            }
+
             setState({
                 ...state,
-                ...{
-                    historyWidth: state.width,
-                    historyHeight: state.height,
-                    marginTop,
-                    marginLeft,
-                    toRight,
-                    toBottom,
-                    draggable,
-                    historyToBottom: state.toBottom,
-                    historyToRight: state.toRight,
-                    isExtend: !isExtend,
-                    width,
-                    height,
-                    transition: '0.4s'
-                }
+                ...newState
             })
 
             setTimeout(() => setState({
-                ...state, ...{
-                    transition: 'none'
-                }
+                ...state,
+                ...newState,
+                transition: 'none'
             }), 400)
         }
 
         if (value === true) {
+            callback()
             setTimeout(() => {
                 callback()
             }, 500)
@@ -191,9 +197,15 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
     }
 
     const afterClose = () => {
-        validFunction(props.afterClose);
-        handleExtend(null, false);
-        store.changeDialogboxVisible(dialogboxId.current, false);
+        ref.current.timeout = setTimeout(() => {
+            setState({
+                ...state,
+                visible: false
+            })
+            validFunction(props.afterClose);
+            handleExtend(null, false);
+            store.changeDialogboxVisible(dialogboxId, false);
+        }, 450)
     }
 
     const onOk = () => {
@@ -202,6 +214,15 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
 
     const onCancel = () => {
         validFunction(props.onCancel)
+    }
+
+    const minimize = () => {
+        validFunction(props.minimize)
+    }
+
+    const close = () => {
+        validFunction(props.onCancel)
+        validFunction(props.close);
     }
 
     const isfocus = () => {
@@ -236,18 +257,19 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
             let toBottom = curCLientY - pointTop + bottom;
 
             if (event.clientX < 10) {
-                store.maskXClassList.add('mask-in-left');
+                store.addMaskXY('left');
             }
             else if (event.clientX > document.body.clientWidth - 10) {
-                store.maskXClassList.add('mask-in-right')
-            } else if (event.clientY < 0) {
-                store.maskYClassList.add('mask-in-top')
+                store.addMaskXY('right');
+            }
+            else if (event.clientY < 0) {
+                store.addMaskXY('top');
             }
             else if (event.clientY > document.body.clientHeight) {
-                store.maskYClassList.add('mask-in-bottom')
+                store.addMaskXY('bottom');
             }
             else {
-                store.clearMaskXY()      
+                store.clearMaskXY()
             }
 
             setState({
@@ -291,7 +313,7 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
 
         let { width, toRight: right, } = state;
         let pointLeft = e.clientX //获取此时鼠标距离屏幕左侧的距离
-        let left = dom.current.offsetLeft + right; //对话框到左边的距离
+        let left = dom.offsetLeft + right; //对话框到左边的距离
         let pointDirectionX, pointDirectionY; //点击的是对话框上下左右
 
         if (x) {
@@ -306,7 +328,7 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
 
         let { height, toBottom: bottom, } = state;
         let pointTop = e.clientY //获取此时鼠标距离屏幕顶部的距离
-        let top = dom.current.offsetTop + bottom; //对话框到顶部的距离
+        let top = dom.offsetTop + bottom; //对话框到顶部的距离
 
         if (y) {
             if (pointTop - top <= 20 && pointTop >= top) {
@@ -372,64 +394,70 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
         const { dialogboxList } = store;
         const focusZIndex = store.focusZIndex;
         if (dialogboxList.length > 1 && state.zIndex < focusZIndex) {
-            let newZIdx = store.promoteZIndex(dialogboxId.current);
+            let newZIdx = store.promoteZIndex(dialogboxId);
             setState({
                 ...state,
-                ...{
-                    zIndex: newZIdx,
-                }
+                zIndex: newZIdx,
             })
         }
     }
 
-    const btnListRender = () => {
-        return <div className='dialogbox-header-btnList'>
-            <div
-                className={'dialogbox-header-btn btn-extend'}
-                onClick={handleExtend}
-            >
-                <i className='dialogbox-icon dialogbox-icon-extend' ></i>
-            </div>
-
-            <div
-                className='dialogbox-header-btn btn-close'
-                onClick={
-                    (e) => {
-                        if (controllable()) {
-                            e.preventDefault()
-                        } else {
-                            onCancel()
-                        }
-                    }
-                }>
-                <i className='dialogbox-icon dialogbox-icon-close'></i>
-            </div>
-        </div>
-    }
-
     useEffect(() => {
-        dialogboxId.current = store.registerDialogbox(props);
-        // 如果是通过open方法打开，需要单独判断是否初始全屏
-        if (byOpen && fullScreen) {
-            handleExtend(true)
-        }
-
-        return () => {
-            afterClose();
-            store.unRegisterDialogbox(dialogboxId.current);
-        }
-    }, [])
-
-    useEffect(() => {
-        if (visible === false) {
-            afterClose()
-        } else {
-            store.changeDialogboxVisible(dialogboxId.current, true);
-            if (props.fullScreen) {
-                handleExtend(true)
+        clearTimeout(timeout);
+        if (!isMount) {
+            if (props.visible === false) {
+                afterClose()
+            } else {
+                setState({
+                    ...state,
+                    visible: true
+                })
+                store.changeDialogboxVisible(dialogboxId, true);
+                if (props.fullScreen) {
+                    handleExtend(true)
+                }
             }
         }
     }, [props.visible])
+
+    useEffect(() => {
+        ref.current.dialogboxId = store.registerDialogbox(props);
+        // 如果是通过open方法打开，需要单独判断是否初始全屏
+        ref.current.isMount = false;
+        return () => {
+            afterClose();
+            store.unRegisterDialogbox(dialogboxId);
+        }
+    }, [])
+
+    const btnListRender = () => {
+        return <div className='dialogbox-header-btnList'>
+            <button
+                className={'dialogbox-header-btn btn-minimize'}
+                onClick={minimize}
+            >
+                <i className='dialogbox-icon dialogbox-icon-minimize' ></i>
+            </button>
+
+            <button
+                className={'dialogbox-header-btn btn-maximize'}
+                onClick={handleExtend}
+            >
+                <i className={classNames('dialogbox-icon',
+                    {
+                        'dialogbox-icon-restore': isExtend,
+                        'dialogbox-icon-maximize': !isExtend
+                    }
+                )}></i>
+            </button>
+
+            <button
+                className='dialogbox-header-btn btn-close'
+                onClick={close}>
+                <i className='dialogbox-icon dialogbox-icon-close'></i>
+            </button>
+        </div>
+    }
 
     const headerRender = () => {
         return header && <div className='dialogbox-header' style={headerStyle}>
@@ -509,11 +537,15 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
         })
     }
 
-    const { isExtend, toRight, toBottom, transition, zIndex } = state;
+    const { visible, isExtend, toRight, toBottom, transition, zIndex, width, height, marginTop, marginLeft } = state;
     const className = classNames('dialogbox', 'dialogbox-animation-in',
-        { 'dialogbox-extendStatus': isExtend, [propsClassName]: propsClassName },
-        { 'dialogbox-uncontrolable': !controllable() },
-        { 'dialogbox-foucs': isfocus() }
+        {
+            'dialogbox-maximizeStatus': isExtend,
+            [propsClassName]: propsClassName,
+            'dialogbox-uncontrolable': !controllable(),
+            'dialogbox-foucs': isfocus(),
+            'dialogbox-animation-out': !props.visible
+        }
     )
 
     const transformProps = {
@@ -526,8 +558,9 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
 
     return (
         <div
-            ref={(dialogbox) => dom.current = dialogbox}
-            id={'dialogbox-' + dialogboxId.current}
+            key={'dialogbox-id-' + dialogboxId}
+            ref={(dialogbox) => ref.current.dom = dialogbox}
+            id={'dialogbox-' + dialogboxId}
             className={className}
             onClick={handleFocus}
             onMouseDown={e => {
@@ -540,8 +573,8 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
                 width: width + 'px',
                 height: height + 'px',
                 zIndex: zIndex,
-                marginTop: marginTop,
-                marginLeft: marginLeft,
+                marginTop,
+                marginLeft,
                 transition,
                 ...transformProps,
             }}>

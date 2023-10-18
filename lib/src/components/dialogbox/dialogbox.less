@@ -1,4 +1,5 @@
 @prefix: ~'dialogbox';
+@btnColor: #414141;
 
 html,
 body {
@@ -26,7 +27,7 @@ body {
             cursor: default !important;
         }
 
-        .dialogbox-icon-extend {
+        .dialogbox-icon-maximizeStatus {
             cursor: no-drop;
         }
 
@@ -61,7 +62,7 @@ body {
     0 9px 28px 8px rgba(0, 0, 0, .05);
     transition: 0.5s;
 
-    &.@{prefix}-extendStatus {
+    &.@{prefix}-maximizeStatus {
         transition: 0.5s;
         top: 0;
         left: 0;
@@ -138,13 +139,12 @@ body {
 
     .dialogbox-header {
         background-color: white;
-        border-bottom: 1px solid #e8e8e8;
+        // border-bottom: 1px solid #e8e8e8;
 
         .dialogbox-title {
             color: #01000C;
 
         }
-
     }
 
     &-header {
@@ -177,55 +177,105 @@ body {
 
             .@{prefix}-header-btn {
                 cursor: pointer;
+                width: 30px;
+                height: 30px;
+                align-items: center;
+                justify-content: center;
+                display: flex;
+                transition: 0.3s;
+                border-radius: 6px;
+                // opacity: 0.8;
+                background-color: white;
 
-                &.btn-extend {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    width: 30px;
-                    background-color: white;
-                    border-radius: 6px;
-                    height: 30px;
+                &:hover {
+                    background-color: #ccc;
                     transition: 0.3s;
-                    opacity: 0.8;
+                    opacity: 1;
 
-                    &:hover {
-                        background-color: #ccc;
-                        transition: 0.3s;
-                        opacity: 1;
+                    &.btn-maximize .dialogbox-icon-restore {
+                        &::before {
+                            background-color: #ccc;
+                        }
                     }
+                }
 
-                    .dialogbox-icon-extend {
+                &.btn-minimize {
+                    .dialogbox-icon-minimize {
+                        width: 18px;
+                        height: 2px;
+                        background: @btnColor;
+                    }             
+                }
+
+                &.btn-maximize {
+                    .dialogbox-icon-maximize {
                         width: 18px;
                         height: 18px;
-                        background-image: url('./images/allScreen.png');
+                        border: 2px solid @btnColor;
+                        border-radius: 4px;
                     }
 
-                    margin-right: 0x;
+                    .dialogbox-icon-restore {
+                        position: relative;
+                        width: 18px;
+                        height: 18px;
+                        &::before {
+                            position: absolute;
+                            content: '';
+                            height: 10px;
+                            width: 10px;
+                            background-color: white;
+                            z-index: 2;
+                            border: 2px solid @btnColor;
+                            top: 4px;
+                            left: -1px;
+                            border-radius: 2px;
+                        }
+                        &::after {
+                            position: absolute;
+                            content: '';
+                            height: 10px;
+                            border-radius: 2px;
+                            width: 10px;
+                            background-color: rgba(0, 0, 0, 0);
+                            border: 2px solid @btnColor;
+                            top: 0px;
+                            left: 4px;
+                        }
+                    }
                 }
 
                 &.btn-close {
-                    border-radius: 4px;
-                    height: 30px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    width: 30px;
-                    transition: 0.3s;
-                    opacity: 0.8;
-
-                    &:hover {
-                        background-color: #ccc;
-                        transition: 0.3s;
-                        opacity: 1;
-                    }
-
                     .dialogbox-icon-close {
-                        width: 20px;
-                        height: 20px;
                         width: 18px;
                         height: 18px;
-                        background-image: url('./images/close.png');
+                        position: relative;
+
+                        &::before {
+                            content: '';
+                            width: 22px;
+                            height: 2px;
+                            position: absolute;
+                            left: -2px;
+                            top: 8px;
+                            transform: rotate(45deg);
+                            background: @btnColor;
+                            border-radius: 1px;
+                        }
+
+                        &::after {
+                            content: '';
+                            width: 22px;
+                            height: 2px;
+                            position: absolute;
+                            left: -2px;
+                            top: 8px;
+                            transform: rotate(-45deg);
+                            background: #515151;
+                            border-radius: 1px;
+                        }
+
+                        // background-image: url('../../images/close.png');
                     }
                 }
             }
@@ -248,6 +298,7 @@ body {
     }
 
     .@{prefix}-footer {
+        padding: 0 8px;
         border-top: 1px solid #e8e8e8;
         height: 40px;
         display: flex;
@@ -257,7 +308,7 @@ body {
 
         &-btnList {
             height: 100%;
-            padding: 0 12px;
+
             display: flex;
             align-items: center;
 
@@ -371,6 +422,7 @@ body {
         top: 2.5%;
         height: 95%;
         transition: 0.6s;
+
         &::before {
             content: "";
             position: absolute;
@@ -390,6 +442,7 @@ body {
         top: 2.5%;
         height: 95%;
         transition: 0.6s;
+
         &::before {
             content: "";
             position: absolute;
@@ -407,6 +460,7 @@ body {
 }
 
 .@{prefix}-extend-mask-y {
+    top: -2px;
     box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.4), -2px -2px 2px rgba(0, 0, 0, 0.4);
     border-radius: 4px;
     border: 1px solid white;
@@ -438,7 +492,7 @@ body {
     }
 
     &.mask-out-top {
-        top: 0;
+        top: -2px;
         transition: 0.6s;
     }
 
@@ -454,6 +508,7 @@ body {
         transition: 0.6s;
         background-color: rgba(255, 255, 255, 0.3);
         border-color: rgba(255, 255, 255, 0.75);
+
         &::before {
             content: "";
             position: absolute;
@@ -470,18 +525,23 @@ body {
     border: 1px solid #555;
     border-radius: 10px;
     box-shadow: none;
-    .dialogbox-header{
+
+    .dialogbox-header {
         background-color: #2E2E2E;
-        border-radius: 10px ;
+        border-radius: 10px;
+
         .dialogbox-title-content {
             color: rgba(255, 255, 255, 0.65);
         }
+
         border-bottom: 1px solid #2E2E2E;
     }
+
     .dialogbox-body {
         // background-color: rgba();
         background-color: #0C0C0C;
     }
+
     .dialogbox-footer {
         border-top: none;
         background-color: #666;
