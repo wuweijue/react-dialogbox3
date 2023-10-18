@@ -35,10 +35,8 @@ class Store {
     // 当前被聚焦元素的层级，即最高层级
     focusZIndex = 1000
     dialogboxList: dialogboxItem[] = []
-    maskClassList = new Set(['dialogbox-mask'])
     maskXClassList = new Set(["dialogbox-extend-mask-x"])
     maskYClassList = new Set(["dialogbox-extend-mask-y"])
-    maskVisible = false
 
     // 获取当前被聚焦的元素
     get focusItem() {
@@ -53,10 +51,6 @@ class Store {
     // 判断是否当前所有对话框均已隐藏或无遮罩层
     get isDialogboxMask() {
         return !!this.dialogboxList.find(item => item.visible && item.mask);
-    }
-
-    get needMask() {
-        return
     }
 
     getDialogboxById(dialogboxId) {
@@ -118,16 +112,12 @@ class Store {
             onCancel,
             isModal
         });
-
-        this.changeMask();
-
         return dialogboxId;
     }
 
     @action unRegisterDialogbox(dialogboxId) {
         const { idx } = this.getDialogboxById(dialogboxId);
         this.dialogboxList.splice(idx, 1);
-        this.changeMask();
     }
 
     @action changeDialogboxVisible(dialogboxId, visible) {
@@ -137,7 +127,6 @@ class Store {
         if (visible == true) {
             this.promoteZIndex(dialogboxId)
         }
-        this.changeMask();
     }
 
     @action hideAllDialogbox() {
@@ -146,20 +135,6 @@ class Store {
                 item.visible = false
             }
         })
-        this.changeMask();
-    }
-
-    // 当对话框出现或隐藏时去同步遮罩层的状态
-    @action changeMask() {
-        const isMask = this.isDialogboxMask;
-
-        if (isMask && !this.maskVisible) {
-            this.maskClassList.delete('dialogbox-mask-out')
-        }
-
-        if (!isMask && this.maskVisible) {
-            this.maskClassList.add('dialogbox-mask-out');
-        }
     }
 
     // 聚焦后提升层级
@@ -176,15 +151,15 @@ class Store {
     }
 
     @action createDialogbox(options) {
-        const { isModal = false } = options;
+        const { isModal = false, mask = true } = options;
         const dialogboxId = this.focusZIndex + 1;
         this.dialogboxList.push({
             ...options,
             isModal,
             dialogboxId,
+            mask,
             component: true
         })
-        this.changeMask();
         return dialogboxId
     }
 
@@ -202,7 +177,6 @@ class Store {
                 return !item.component
             })
         }
-        this.changeMask();
     }
 }
 

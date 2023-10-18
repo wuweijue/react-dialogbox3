@@ -2,6 +2,8 @@ import { inject, observer, Provider as MobxProvider } from 'mobx-react';
 import * as React from 'react';
 import store from '../../store';
 import Dialogbox from '../dialogbox/Dialogbox';
+import * as classNames from 'classnames';
+import Control from '../dialogbox/Control';
 
 const Root = ((props) => {
     return <MobxProvider store={store}>
@@ -15,7 +17,7 @@ const Provider = inject('store')(observer((props) => {
 
     const { store } = props;
 
-    const { maskVisible, maskClassList, maskXClassList, maskYClassList, validFunction, focusItem } = store;
+    const { isDialogboxMask, maskXClassList, maskYClassList, validFunction, focusItem } = store;
 
     const handleMaskClick = () => {
         if (!focusItem.maskClosable) {
@@ -28,13 +30,16 @@ const Provider = inject('store')(observer((props) => {
         {
             props.children
         }
+
+        <Control store={store}/>
+
         <div
-            style={{ display: maskVisible ? 'block' : 'none' }}
-            className={Array.from(maskClassList).join(' ')}
+            className={classNames('dialogbox-mask', {
+                "dialogbox-mask-in": isDialogboxMask,
+                "dialogbox-mask-out": !isDialogboxMask
+            })}
             onClick={handleMaskClick}
         ></div>
-
-
         <div className={Array.from(maskXClassList).join(' ')}></div>
         <div className={Array.from(maskYClassList).join(' ')}></div>
         <div
