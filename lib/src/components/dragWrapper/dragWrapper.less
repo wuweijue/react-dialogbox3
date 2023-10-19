@@ -1,0 +1,50 @@
+.dialogbox-mask {
+    display        : flex;
+    justify-content: center;
+
+    .dragWrapper {
+        margin-top      : 100px;
+        border          : 2px dashed #555;
+        width           : 300px;
+        height          : 150px;
+        // border-radius: 10px;
+        display         : flex;
+        justify-content : center;
+        align-items     : center;
+
+        @length: 60px;
+
+        .add {
+            position: relative;
+            width   : @length;
+            height  : @length;
+
+
+            &::before {
+                content      : '';
+                width        : @length;
+                height       : 2px;
+                position     : absolute;
+                top: 30px;
+                // left         : -2px;
+                // top          : 8px;
+                background   : #555;
+                border-radius: 1px;
+            }
+
+            &::after {
+                content      : '';
+                width        : @length;
+                height       : 2px;
+                position     : absolute;
+                top: 30px;
+                // left         : -2px;
+                // top          : 8px;
+                transform    : rotate(90deg);
+                background   : #555;
+                border-radius: 1px;
+            }
+        }
+
+    }
+}

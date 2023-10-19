@@ -67,7 +67,6 @@ export default App
         onCancel() {
             setVisible(false)
         },
-        isModal: true,
         title,
         mask,
         maskClosable,

@@ -37,6 +37,7 @@ class Store {
     dialogboxList: dialogboxItem[] = []
     maskXClassList = new Set(["dialogbox-extend-mask-x"])
     maskYClassList = new Set(["dialogbox-extend-mask-y"])
+    dragWrapperVisible = true;
 
     // 获取当前被聚焦的元素
     get focusItem() {
@@ -121,9 +122,9 @@ class Store {
     }
 
     @action changeDialogboxVisible(dialogboxId, visible) {
-        const { idx } = this.getDialogboxById(dialogboxId);
-        if (!this.dialogboxList[idx]) return;
-        this.dialogboxList[idx].visible = visible;
+        const { item } = this.getDialogboxById(dialogboxId);
+        if (!item) return;
+        item.visible = visible;
         if (visible == true) {
             this.promoteZIndex(dialogboxId)
         }
@@ -152,10 +153,10 @@ class Store {
 
     @action createDialogbox(options) {
         const { isModal = false, mask = true } = options;
-        const dialogboxId = this.focusZIndex + 1;
+        const dialogboxId = ++this.focusZIndex;
         this.dialogboxList.push({
             ...options,
-            isModal,
+        isModal,
             dialogboxId,
             mask,
             component: true

@@ -2,6 +2,8 @@ import * as React from 'react';
 
 export type IDialogboxProps = {
 
+    dialogboxId?: number
+
     close?(): void
 
     minimize?(): void

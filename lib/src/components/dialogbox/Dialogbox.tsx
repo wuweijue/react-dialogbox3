@@ -3,7 +3,7 @@ import Button from '../button/Button';
 import { IDialogboxProps } from './Dialogbox.d';
 import './dialogbox.less';
 import * as React from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { inject, observer } from 'mobx-react';
 
 const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
@@ -18,14 +18,14 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
         isMount: boolean,
         timeout: number
     }>({
-        dialogboxId: store.focusZIndex + 1,
+        dialogboxId: props.dialogboxId || 1001,
         isEmbedded: false,
         dom: null,
         isMount: true,
         timeout: 0
     });
 
-    const { dialogboxId, dom, isMount, timeout } = ref.current;
+    const { dialogboxId, dom, isMount } = ref.current;
 
     const computerLayout = useMemo(() => {
         let width = 400, height = 180;
@@ -197,15 +197,7 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
     }
 
     const afterClose = () => {
-        ref.current.timeout = setTimeout(() => {
-            setState({
-                ...state,
-                visible: false
-            })
-            validFunction(props.afterClose);
-            handleExtend(null, false);
-            store.changeDialogboxVisible(dialogboxId, false);
-        }, 450)
+        validFunction(props.afterClose);
     }
 
     const onOk = () => {
@@ -403,27 +395,42 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
     }
 
     useEffect(() => {
-        clearTimeout(timeout);
-        if (!isMount) {
-            if (props.visible === false) {
-                afterClose()
+        if (isMount) {
+            ref.current.isMount = false;
+            if (props.fullScreen) {
+                handleExtend(true)
+            }
+            return
+        }
+
+        if (props.visible === true) {
+            setState({
+                ...state,
+                visible: true
+            })
+        } else {
+            if (props.byOpen) {
+                
             } else {
+                store.changeDialogboxVisible(dialogboxId, false)
+            }
+            setTimeout(() => {
                 setState({
                     ...state,
-                    visible: true
+                    visible: false
                 })
-                store.changeDialogboxVisible(dialogboxId, true);
-                if (props.fullScreen) {
-                    handleExtend(true)
-                }
-            }
+            }, 450)
+            afterClose()
         }
     }, [props.visible])
 
-    useEffect(() => {
-        ref.current.dialogboxId = store.registerDialogbox(props);
+    useLayoutEffect(() => {
+        if (props.byOpen) {
+            return
+        }
+        store.registerDialogbox(props);
+        ref.current.dialogboxId = store.focusItem.dialogboxId;
         // 如果是通过open方法打开，需要单独判断是否初始全屏
-        ref.current.isMount = false;
         return () => {
             afterClose();
             store.unRegisterDialogbox(dialogboxId);

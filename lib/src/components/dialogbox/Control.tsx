@@ -1,7 +1,7 @@
 import * as React from 'react';
 import './control.less';
 import { useState } from 'react';
-import* as classNames from 'classnames';
+import * as classNames from 'classnames';
 
 const Control = (props) => {
 
@@ -51,7 +51,16 @@ const Control = (props) => {
         transform: 'translate(' + (0) + 'px,' + (-toTop || 0) + 'px)'
     }
 
-    return <button className="dialogbox-control"
+    return <div
+        className={classNames('dialogbox-control', {
+            'dialogbox-control-in': listVisible
+        })}
+        onMouseLeave={() => {
+            setState({
+                ...state,
+                listVisible: false
+            })
+        }}
         onMouseDown={(e) => {
             dragMove(e)
         }}
@@ -59,34 +68,40 @@ const Control = (props) => {
             ...transformProps
         }}
     >
-        <div className="home-button" onMouseEnter={(e)=>{
-            console.log(111)
-            setState({
-                ...state,
-                listVisible: true
-            })
-        }}>
+
+        <button className="home-button" style={{ display: listVisible ? 'none' : 'block' }}
+            onClick={(e) => {
+                setState({
+                    ...state,
+                    listVisible: true
+                })
+            }}
+        >
             <div className="middle">
                 <div className="left-top arrow"></div>
                 <div className="left-bottom arrow"></div>
                 <div className="right-top arrow"></div>
                 <div className="right-bottom arrow"></div>
             </div>
-        </div>
+        </button>
 
-        <div className={classNames('control-list', {
-            'control-list-in': listVisible
-        })}>
-            <div className="arrow"></div>
+        <div className="list-wrapper" style={{ display: listVisible ? 'block' : 'none' }}>
             {
-                store.dialogboxList.filter(item=>item.component).map(item=>{
-                    return <div className="list-item" key={item.dialogboxId}>
-                        {item.dialogboxId}
+                store.dialogboxList.filter(item => item.component && !item.visible).map((item, idx) => {
+                    return <div className="list-item" key={item.dialogboxId} >
+                        <div className='title'
+                            onClick={() => store.changeDialogboxVisible(item.dialogboxId, true)}>
+                            <span className='radius'>{idx + 1}.</span>
+                            <span>{item.title || item.dialogboxId}</span>
+                        </div>
+                        <div className="close" onClick={() => {
+                            store.closeDialogbox(item.dialogboxId)
+                        }}></div>
                     </div>
                 })
             }
         </div>
-    </button>
+    </div>
 }
 
 export default Control
