@@ -7,6 +7,10 @@ const Control = (props) => {
 
     const store = props.store;
 
+    const { storageboxOptions } = props;
+
+    const { operation = 'click' } = storageboxOptions || {}
+
     const [state, setState] = useState({
         toTop: 200,
         listVisible: false
@@ -51,6 +55,16 @@ const Control = (props) => {
         transform: 'translate(' + (0) + 'px,' + (-toTop || 0) + 'px)'
     }
 
+    const isVisible = React.useMemo(() => {
+        if (typeof storageboxOptions === 'object') {
+            return storageboxOptions.visible !== false
+        }
+        if (typeof storageboxOptions === 'boolean') {
+            return storageboxOptions
+        }
+        return true
+    }, [storageboxOptions])
+
     return <div
         className={classNames('dialogbox-control', {
             'dialogbox-control-in': listVisible
@@ -65,12 +79,21 @@ const Control = (props) => {
             dragMove(e)
         }}
         style={{
+            display: isVisible ? 'block' : 'none',
             ...transformProps
         }}
     >
 
         <button className="home-button" style={{ display: listVisible ? 'none' : 'block' }}
             onClick={(e) => {
+                if (operation !== 'click') return;
+                setState({
+                    ...state,
+                    listVisible: true
+                })
+            }}
+            onMouseOver={(e) => {
+                if (operation !== 'hover') return;
                 setState({
                     ...state,
                     listVisible: true

@@ -1,0 +1,86 @@
+.layout {
+    display: flex;
+    height: 100%;
+    width: 100%;
+
+    .left {
+        width: 280px;
+        padding: 10px 0;
+        height: 100%;
+        border-right: 1px solid #ddd;
+
+        .componentType {
+            display: flex;
+            justify-content: center;
+
+            .tab-item {
+                padding: 0 8px;
+                font-size: 15px;
+                height: 40px;
+                line-height: 40px;
+                border-bottom: 2px solid white;
+                text-align: center;
+                cursor: pointer;
+                margin-left: 10px;
+
+                &.active {
+                    color: #892e8a;
+                    border-color: #892e8a;
+                }
+
+                &:first-of-type {
+                    margin-left: 0;
+                }
+            }
+        }
+
+        .aside-list {
+            margin-top: 20px;
+
+            .aside-list-item {
+                cursor: pointer;
+                height: 32px;
+                line-height: 32px;
+                border-left: 4px solid white;
+                margin-top: 8px;
+                padding: 0 20px;
+
+                a {
+                    font-size: 15px;
+                }
+
+                &:first-of-type {
+                    margin-top: 0;
+                }
+
+                &.active {
+                    border-color: #892e8a;
+
+                    a {
+                        color: #892e8a;
+                    }
+                }
+            }
+        }
+    }
+
+    .right {
+        overflow-y: auto;
+        flex: 1;
+        width: 0;
+        height: 100%;
+    }
+}
+
+.item-content {
+    margin-top: 60px;
+
+    &:first-of-type {
+        margin-top: 0;
+        
+    }
+}
+
+#instance {
+    min-height: 900px;
+}

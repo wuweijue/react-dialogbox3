@@ -1,0 +1,54 @@
+.header {
+    display: flex;
+    height: 60px;
+    justify-content: space-between;
+    border: 1px solid #ddd;
+
+    .left {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+
+        .logo {
+            cursor: pointer;
+        }
+
+        .title {
+            cursor: pointer;
+            font-weight: bolder;
+            font-size: 18px;
+        }
+    }
+
+    .right {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+
+        .menu {
+            display: flex;
+            margin-right: 24px;
+
+            .menu-item {
+                cursor: pointer;
+                padding: 0 10px;
+                text-align: center;
+                border-bottom: 2px solid white;
+                height: 58px;
+                line-height: 60px;
+                margin-left: 20px;
+                font-size: 15px;
+
+                &:first-of-type {
+                    margin-left: 0;
+                }
+
+                &.active {
+                    border-color: #892e8a;
+                }
+            }
+        }
+    }
+}

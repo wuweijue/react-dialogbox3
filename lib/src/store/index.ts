@@ -7,7 +7,8 @@ interface dialogboxItem {
     onOk(): void
     onCancel(): void,
     visible: boolean,
-    mask: boolean
+    mask: boolean,
+    zIndex: number
 }
 
 class Store {
@@ -38,10 +39,18 @@ class Store {
     maskXClassList = new Set(["dialogbox-extend-mask-x"])
     maskYClassList = new Set(["dialogbox-extend-mask-y"])
     dragWrapperVisible = true;
+    defaultOptions
 
     // 获取当前被聚焦的元素
     get focusItem() {
-        return ((this.dialogboxList.length && this.dialogboxList[this.dialogboxList.length - 1]) as dialogboxItem)
+        let focusItem = this.dialogboxList[0];
+        this.dialogboxList.forEach(item=>{
+            if(item.zIndex > focusItem.zIndex) {
+                focusItem = item
+            }
+        })
+        return focusItem
+        // return ((this.dialogboxList.length && this.dialogboxList[this.dialogboxList.length - 1]) as dialogboxItem)
     }
 
     // 判断是否当前所有对话框均已隐藏
@@ -51,7 +60,7 @@ class Store {
 
     // 判断是否当前所有对话框均已隐藏或无遮罩层
     get isDialogboxMask() {
-        return !!this.dialogboxList.find(item => item.visible && item.mask);
+        return !!this.dialogboxList.find(item => item.visible && item.mask !== false);
     }
 
     getDialogboxById(dialogboxId) {
@@ -70,8 +79,12 @@ class Store {
         return callback(event)
     }
 
+    @action initDefaultOptions(defaultOptions) {
+        this.defaultOptions = defaultOptions
+    }
+
     @action addMaskXY(direction) {
-        if(direction === 'left' || direction === 'right') {
+        if (direction === 'left' || direction === 'right') {
             this.maskXClassList.add('mask-in-' + direction)
         } else {
             this.maskYClassList.add('mask-in-' + direction)
@@ -98,7 +111,7 @@ class Store {
             this.maskYClassList.delete('mask-in-top');
             this.maskYClassList.delete('mask-in-bottom');
             this.maskYClassList.add('mask-out-bottom');
-        }    
+        }
     }
 
     // 注册新生成的对话框
@@ -111,7 +124,8 @@ class Store {
             mask,
             onOk,
             onCancel,
-            isModal
+            isModal,
+            zIndex: dialogboxId
         });
         return dialogboxId;
     }
@@ -140,23 +154,26 @@ class Store {
 
     // 聚焦后提升层级
     @action promoteZIndex(dialogboxId) {
+        if(this.getDialogboxById(dialogboxId).item.zIndex === this.focusZIndex) {
+            return this.focusZIndex
+        }
+        let zIndex = ++this.focusZIndex;
         for (let i = 0; i < this.dialogboxList.length; i++) {
             if (this.dialogboxList[i].dialogboxId == dialogboxId) {
-                let dialogbox = this.dialogboxList[i];
-                this.dialogboxList.splice(i, 1);
-                this.dialogboxList.push(dialogbox);
+                this.dialogboxList[i].zIndex = zIndex
                 break;
             }
         }
-        return ++this.focusZIndex;
+        return zIndex
     }
 
     @action createDialogbox(options) {
         const { isModal = false, mask = true } = options;
         const dialogboxId = ++this.focusZIndex;
         this.dialogboxList.push({
-            ...options,
-        isModal,
+            ...this.defaultOptions,
+            ...options.props,
+            isModal,
             dialogboxId,
             mask,
             component: true

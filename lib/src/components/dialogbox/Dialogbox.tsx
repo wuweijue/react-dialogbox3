@@ -267,6 +267,7 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
             setState({
                 ...state,
                 ...{
+                    zIndex: store.focusZIndex,
                     toRight: toRight,
                     toBottom: toBottom,
                 }
@@ -300,6 +301,8 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
         if (!x && !y) return;
 
         if (!controllable()) return;
+
+        // handleFocus()
 
         e.stopPropagation();
 
@@ -363,6 +366,7 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
             setState({
                 ...state,
                 ...{
+                    zIndex: store.focusZIndex,
                     toRight,
                     width: newWidth,
                     toBottom,
@@ -408,6 +412,7 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
                 ...state,
                 visible: true
             })
+            store.changeDialogboxVisible(dialogboxId, true)
         } else {
             if (props.byOpen) {
                 
@@ -531,7 +536,10 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
 
     const angleRender = () => {
         return ['right-bottom', 'right-top', 'left-bottom', 'left-top'].map(item => {
-            return <div key={item} className={classNames('draggableAngle', item)} onMouseDown={(e) => dragScale(e, true, true)}></div>
+            return <div key={item} className={classNames('draggableAngle', item)} onMouseDown={(e) => { 
+                dragScale(e, true, true);
+                handleFocus()
+            }}></div>
         })
     }
 
@@ -569,8 +577,9 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
             ref={(dialogbox) => ref.current.dom = dialogbox}
             id={'dialogbox-' + dialogboxId}
             className={className}
-            onClick={handleFocus}
+            // onClick={handleFocus}
             onMouseDown={e => {
+                handleFocus()
                 if (!controllable()) {
                     e.preventDefault()
                 }
@@ -579,7 +588,7 @@ const Dialogbox = inject('store')(observer((props: IDialogboxProps) => {
                 display: visible ? 'flex' : 'none',
                 width: width + 'px',
                 height: height + 'px',
-                zIndex: zIndex,
+                zIndex: state.zIndex,
                 marginTop,
                 marginLeft,
                 transition,

@@ -16,9 +16,9 @@ const Root = ((props) => {
 
 const Provider = inject('store')(observer((props) => {
 
-    const { store } = props;
+    const { store, storagebox = true } = props;
 
-    const { dragWrapperVisible, isDialogboxMask, maskXClassList, maskYClassList, validFunction, focusItem } = store;
+    const { isDialogboxMask, maskXClassList, maskYClassList, validFunction, focusItem } = store;
 
     const handleMaskClick = () => {
         if (!focusItem.maskClosable) {
@@ -27,12 +27,16 @@ const Provider = inject('store')(observer((props) => {
         validFunction(focusItem.onCancel)
     }
 
+    React.useEffect(()=>{
+        store.initDefaultOptions(props)
+    }, [props])
+
     return <>
         {
             props.children
         }
 
-        <Control store={store} />
+        { storagebox && <Control store={store} storagebox={storagebox}/>}
 
         <div
             className={classNames('dialogbox-mask', {
@@ -43,7 +47,7 @@ const Provider = inject('store')(observer((props) => {
             onClick={handleMaskClick}
         >
             {
-                dragWrapperVisible && <DragWrapper />
+                // dragWrapperVisible && <DragWrapper />
             }
         </div>
         <div className={Array.from(maskXClassList).join(' ')}>

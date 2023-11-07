@@ -1,0 +1,93 @@
+.usage {
+    width: 100%;
+    height: 100%;
+
+    .usage-container {
+        padding: 0 20px 20px 20px;
+
+        .code-wrapper {
+            background-color: rgb(40, 44, 52);
+            padding: 28px;
+            border-radius: 10px;
+
+            pre {
+                padding: 0!important;
+                margin: 0;
+                background: inherit!important;
+
+                * {
+                    font-size: 14px;
+                    font-family: Consolas!important;
+                    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+                    // font-family: "Times New Roman", Times, serif;  
+                }
+            }
+        }
+
+
+        .install {
+            padding: 20px;
+        }
+
+        #install {
+
+            .code-wrapper {
+
+                .code {
+                    span {
+                        margin-right: 8px;
+                    }
+
+                    span:nth-of-type(1) {
+                        color: #e5fd78;
+                    }
+
+                    span:nth-of-type(2) {
+                        color: rgb(240, 253, 175);
+                    }
+
+                    span:nth-of-type(3) {
+                        color: rgb(218, 254, 207);
+                    }
+                }
+
+                .code:nth-of-type(1) {
+                    margin-bottom: 20px;
+                }
+            }
+
+        }
+
+        #embedded {
+
+            .embedded-content {
+                .sp-wrapper {
+                    width: 100%;
+                }
+
+                display: flex;
+                flex-wrap: wrap;
+
+                .left {
+                    padding: 0 20px;
+                    flex: 1;
+                }
+
+                .right {
+                    padding: 0 20px;
+                    flex: 1;
+                }
+
+                .left,
+                .right {
+                    display: flex;
+                    flex-direction: column;
+
+                    pre {
+                        flex: 1;
+                    }
+                }
+            }
+        }
+    }
+}

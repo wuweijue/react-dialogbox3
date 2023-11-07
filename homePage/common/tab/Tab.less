@@ -1,0 +1,271 @@
+.dark.dialogDemo {
+    .tab {
+        color: rgba(255, 255, 255, 0.65);
+
+        .tab-bar-wrapper {
+
+            .logo {
+                color: #FF27BB;
+                // background: linear-gradient(to right, #FF27BB, #892e8a);
+                -webkit-background-clip: text;
+                font-weight: bold;
+                // color: transparent;
+            }
+
+            background: #2d2d2d;
+
+            .tab-bar-list {
+                .tab-bar-item {
+                    background: #2d2d2d;
+                    color: rgba(255, 255, 255, 0.65);
+
+                    &.active {
+                        position: relative;
+                        background: #141414;
+
+                        &::before {
+                            position: absolute;
+                            content: '';
+                            width: 20px;
+                            left: -20px;
+                            height: 18px;
+                            bottom: 0;
+                            background: #141414;
+                        }
+
+                        &::after {
+                            position: absolute;
+                            content: '';
+                            width: 20px;
+                            right: -20px;
+                            height: 18px;
+                            bottom: 0;
+                            background: #141414;
+                        }
+
+                        .tab-bar-item-active-tip {
+                            &::before {
+                                border-color: rgb(20, 20, 20);
+                            }
+                        }
+
+                        &+.tab-bar-item {
+                            .tab-bar-item-active-tip {
+                                &::before {
+                                    border-color: rgb(45, 45, 45);
+                                }
+                            }
+                        }
+                    }
+
+                    .tab-bar-item-active-tip {
+                        background-color: rgba(255, 255, 255, 0.4);
+
+                        &.active {
+                            background-color: #892e8a;
+                            // background-color: white;
+                        }
+                    }
+
+                    .tab-bar-item-active-close {
+                        .close-line {
+                            background-color: black;
+                        }
+                    }
+                }
+            }
+
+        }
+
+        .tab-component-wrapper {
+            .tab-component-item {
+                display: flex;
+                background-color: #141414;
+
+                .item-container {
+                    background-color: #141414;
+                    flex: 1;
+                }
+            }
+        }
+    }
+}
+
+
+.dialogDemo {
+    flex: 1;
+
+    .tab {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        overflow: hidden;
+
+        .tab-bar-wrapper {
+            height: 56px;
+            font-size: 15px;
+            background: #F0f0f0;
+            display: flex;
+            justify-content: space-between;
+
+            .tab-bar-list {
+                margin-top: 20px;
+                height: 100%;
+                white-space: nowrap;
+                padding-right: 40px;
+                display: flex;
+                position: relative;
+
+                .tab-bar-shadow {
+                    position: absolute;
+                    bottom: 0;
+                    height: 50%;
+                    background-color: #141414;
+                    width: 100%;
+                    z-index: 0;
+                }
+
+                .tab-bar-item {
+
+                    cursor: pointer;
+                    // margin-left: 10px;
+                    line-height: 30px;
+                    z-index: 1;
+                    position: relative;
+
+                    &:not(.tab-bar-logo) {
+                        padding-right: 4px;
+
+                        .tab-bar-item-title {
+                            padding-right: 16px;
+                        }
+
+                        .tab-bar-item-active-tip {
+                            position: relative;
+
+                            &::before {
+                                position: absolute;
+                                content: '';
+                                left: -15px;
+                                top: -2px;
+                                width: 1px;
+                                height: 18px;
+                                line-height: 20px;
+                                border-left: 1px solid rgba(255, 255, 255, 0.4);
+                            }
+                        }
+
+                        // &:nth-of-type(1) {
+                        //     .tab-bar-item-title {
+                        //         border-right: none;
+                        //     }
+                        // }
+                    }
+
+                    &.tab-bar-logo {
+                        // margin-top: 4px;
+                        font-size: 16px;
+
+                        &::before {
+                            display: none;
+                        }
+
+                        border-top-left-radius: 0 !important;
+
+                        .tab-bar-item-active-tip {
+                            display: none;
+                        }
+                    }
+
+                    &.before {
+                        width: 20px;
+                        border-radius: 0px 0px 12px 0px;
+                    }
+
+                    &.after {
+                        width: 20px;
+                        border-radius: 0px 0px 0px 12px;
+                    }
+
+                    &.active {
+                        z-index: 0;
+                        border-radius: 12px 12px 0 0;
+
+                        &+.tab-bar-item {
+                            .tab-bar-item-active-tip {
+                                &::before {
+                                    // border-color: ;
+                                }
+                            }
+                        }
+                    }
+
+                    padding : 0 16px;
+                    align-items : center;
+                    background-color: white;
+                    border-radius : 12px;
+                    height : 36px;
+                    border : none;
+                    display : inline-flex;
+
+                    .tab-bar-item-active-tip {
+
+                        // display: none;
+                        background-color: #E8EAEC;
+                        height: 14px;
+                        width: 14px;
+                        border-radius: 50%;
+                        margin-right: 6px;
+
+                        &.active {
+                            // background-color: #2D8CF0;
+                            background-color: rgba(0, 110, 255, 1);
+                        }
+                    }
+
+                    .tab-bar-item-title {
+                        // margin-right: 40px;
+                        margin-left: 2px;
+                        font-size: 15px;
+                    }
+
+
+                }
+            }
+
+        }
+
+        .tab-component-wrapper {
+            flex: 1;
+            height: 0;
+            // background: #F0f0f0;
+            background-color: white;
+            overflow-y: auto;
+            overflow-x: hidden;
+
+
+            .tab-component-list {
+                // transition: 0.5s;
+                height: 100%;
+                display: inline-block;
+                white-space: nowrap;
+                width: 0;
+
+                .tab-component-item {
+                    overflow-x: hidden;
+                    display: inline-block;
+                    height: 100%;
+                    vertical-align: top;
+                    width: 0;
+                }
+            }
+        }
+    }
+
+    .tabs-bar-display {
+        .ant-tabs-bar {
+            display: none;
+        }
+    }
+}
