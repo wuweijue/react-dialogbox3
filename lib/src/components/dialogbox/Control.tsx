@@ -1,7 +1,6 @@
 import * as React from 'react';
 import './control.less';
 import { useState } from 'react';
-import * as classNames from 'classnames';
 
 const Control = (props) => {
 
@@ -65,10 +64,13 @@ const Control = (props) => {
         return true
     }, [storageboxOptions])
 
+    const className = ['dialogbox-control']
+    if (listVisible) {
+        className.push('dialogbox-control-in')
+    }
+
     return <div
-        className={classNames('dialogbox-control', {
-            'dialogbox-control-in': listVisible
-        })}
+        className={className.join('')}
         onMouseLeave={() => {
             setState({
                 ...state,

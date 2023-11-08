@@ -1,5 +1,6 @@
 import * as React from 'react';
-import * as classNames  from 'classnames';
+//@ts-ignore
+import classNames  from 'classNames';
 import './button.less';
 
 declare type IButtonType = 'default' | 'primary' | 'ghost' | 'dashed' | 'danger';

@@ -1,8 +1,7 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classNames from 'classNames';
 import './Tab.less';
 import Control from './Control';
-import Aside from '../aside/Aside';
 
 interface Item {
     title: JSX.Element | string;

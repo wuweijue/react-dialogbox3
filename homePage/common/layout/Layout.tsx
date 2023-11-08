@@ -1,8 +1,7 @@
 import './layout.less';
 import React, { useState, useTransition } from 'react';
 import { inject, observer } from 'mobx-react';
-import classnames from 'classnames';
-import classNames from 'classnames';
+import classNames from 'classNames';
 import { useTranslation } from 'react-i18next';
 
 interface Iprops {
@@ -55,7 +54,7 @@ const Layout = inject('store')(observer((props: Iprops) => {
             <div className="aside-list">
                 {
                     asideList.map((item, idx) => {
-                        return <div key={item.value} className={classnames('aside-list-item', {
+                        return <div key={item.value} className={classNames('aside-list-item', {
                             active: activeAnchor === item.value
                         })} onClick={() => handleClick(item.value)}>
                             <a>{t(item.title)}</a>

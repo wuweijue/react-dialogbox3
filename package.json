@@ -36,7 +36,7 @@
     "@types/react-monaco-editor": "^0.16.0",
     "add": "^2.0.6",
     "antd": "^5.9.3",
-    "classnames": "^2.3.1",
+    "classnames": "2.3.1",
     "i18next": "^23.6.0",
     "i18next-xhr-backend": "^3.2.2",
     "mobx": "^6.10.2",

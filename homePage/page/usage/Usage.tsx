@@ -4,11 +4,10 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import * as codeStyle from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { Sandpack, SandpackPreview, SandpackProvider } from "@codesandbox/sandpack-react";
 import Layout from '../../common/layout/Layout';
-import classnames from 'classnames';
 import { useState, useTransition } from 'react';
 import { Radio, Switch } from 'antd';
 import { inject, observer } from 'mobx-react';
-import classNames from 'classnames';
+import classNames from 'classNames';
 import { useTranslation } from 'react-i18next';
 
 // const Embedde

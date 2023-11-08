@@ -2,9 +2,8 @@ import { inject, observer, Provider as MobxProvider } from 'mobx-react';
 import * as React from 'react';
 import store from '../../store';
 import Dialogbox from '../dialogbox/Dialogbox';
-import * as classNames from 'classnames';
+//@ts-ignore
 import Control from '../dialogbox/Control';
-import DragWrapper from '../dragWrapper/DragWrapper';
 
 const Root = ((props) => {
     return <MobxProvider store={store}>
@@ -31,6 +30,13 @@ const Provider = inject('store')(observer((props) => {
         store.initDefaultOptions(props)
     }, [props])
 
+    const className = ['dialogbox-mask'];
+    if(isDialogboxMask) {
+        className.push('dialogbox-mask-in')
+    } else {
+        className.push('dialogbox-mask-out')
+    }
+
     return <>
         {
             props.children
@@ -39,10 +45,7 @@ const Provider = inject('store')(observer((props) => {
         { storagebox && <Control store={store} storagebox={storagebox}/>}
 
         <div
-            className={classNames('dialogbox-mask', {
-                "dialogbox-mask-in": isDialogboxMask,
-                "dialogbox-mask-out": !isDialogboxMask
-            })}
+            className={className.join(' ')}
 
             onClick={handleMaskClick}
         >

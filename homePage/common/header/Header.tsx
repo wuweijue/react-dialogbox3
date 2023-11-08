@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Select } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './header.less';
-import classNames from 'classnames';
+import classNames from 'classNames';
 import { inject, observer } from 'mobx-react';
 import { useTranslation } from 'react-i18next';
 

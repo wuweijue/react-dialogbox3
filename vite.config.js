@@ -26,14 +26,16 @@ export default defineConfig({
                 //         return 'keep';
                 //     }
                 // }
-            }
-        }
+            },
+        },
+        sourcemap: true
     },
     resolve: {
         alias: {
             // 'useTranslate': '/src/utils/useTranslate',
             // '@utils': '/src/utils',
-            // '@store': '/src/store'
+            'classNames': path.resolve(__dirname, './lib/src/common/classNames.ts')
         }
-    }
+    },
+
 })

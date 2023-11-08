@@ -1,4 +1,5 @@
-import * as classNames from 'classnames';
+//@ts-ignore
+import classNames from 'classNames';
 import Button from '../button/Button';
 import { IDialogboxProps } from './Dialogbox.d';
 import './dialogbox.less';
