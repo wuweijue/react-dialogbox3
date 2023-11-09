@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Select } from 'antd';
+import { Select, Tooltip } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './header.less';
 import classNames from 'classNames';
@@ -29,8 +29,8 @@ const Header = inject('homeStore')(observer((props) => {
     const store = props.homeStore
     return <div className="header">
         <div className="left">
-            <div className="logo" onClick={()=>navigate('/home')}></div>
-            <div className="title" onClick={()=>navigate('/home')}>React-dialogbox</div>
+            <div className="logo" onClick={() => navigate('/home')}></div>
+            <div className="title" onClick={() => navigate('/home')}>React-dialogbox</div>
         </div>
         <div className="right">
             <div className="menu">
@@ -50,13 +50,16 @@ const Header = inject('homeStore')(observer((props) => {
             </div>
             <div className="controller">
                 {/* <span>Language: </span> */}
-                <Select value={store.language} onSelect={value=>{
-                    store.switchLanguage(value);
-                    i18n.changeLanguage(value)
-                }}>
-                    <Select.Option value='en-us'>En</Select.Option>
-                    <Select.Option value='zh-cn'>中</Select.Option>
-                </Select>
+                <Tooltip title='Language'>
+                    <Select value={store.language} onSelect={value => {
+                        store.switchLanguage(value);
+                        i18n.changeLanguage(value)
+                    }}>
+                        <Select.Option value='en-us'>En</Select.Option>
+                        <Select.Option value='zh-cn'>中</Select.Option>
+                    </Select>
+                </Tooltip>
+
             </div>
         </div>
     </div>

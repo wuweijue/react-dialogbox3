@@ -109,5 +109,7 @@
     "Provider 组件 Props": "Provider component props",
     "openDialogbox 函数返回的 Dialogbox 实例对象": "openDialogbox function return Instance",
     "属性名": "key",
-    "说明": "description"
+    "说明": "description",
+    "基于 React18 的悬浮层窗口组件": "React18-based floating window component",
+    "开始使用": "Start using"
 }
